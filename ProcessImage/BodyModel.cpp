@@ -170,13 +170,13 @@ BodyModel::BodyModel(
 
     _left_toe = Point(_left_heel.x - _foot_width, _left_heel.y);
     _left_heel_upper = Point(_left_heel.x, _left_heel.y - _foot_heigh);
-    
+
     //Derive head
     _head_center = Point(_center_x, _center_y - _neck_heigh);
     _head_upper = Point(_center_x, _center_y - neck_heigh - _head_radius);
 }
 
-bool BodyModel::withinRange(Point point)
+bool BodyModel::withinImage(Point point)
 {
     return withinImage(point.x, true) && withinImage(point.y, false);
 }
@@ -201,20 +201,6 @@ bool BodyModel::withinImage(int value, bool horizontal)
 }
 bool BodyModel::withinRange()
 {
-    double cos_left_arm_angle = cos(_left_arm_angle / 180 * PI);
-    double sin_left_arm_angle = sin(_left_arm_angle / 180 * PI);
-    double cos_right_leg_angle = cos(_right_leg_angle / 180 * PI);
-    double sin_right_leg_angle = sin(_right_leg_angle / 180 * PI);
-    double cos_right_arm_angle = cos(_right_arm_angle / 180 * PI);
-    double sin_right_arm_angle = sin(_right_arm_angle / 180 * PI);
-    double right_arm_center_x = _right_shoulder.x - _arm_width * sin_right_arm_angle / 2;
-    double right_arm_center_y = _center_y + _arm_width * cos_right_arm_angle / 2;
-    double right_hand_center_x = right_arm_center_x + _arm_length * cos_right_arm_angle;
-    double right_hand_center_y = right_arm_center_y + _arm_length * sin_right_arm_angle;
-
-    double left_arm_center_x = _left_shoulder.x + _arm_width * sin_left_arm_angle / 2;
-    double left_hand_center_x = left_arm_center_x - _arm_length * cos_left_arm_angle;
-
     return withinRange(_center_x, _center_x_min, _center_x_max)
         && withinRange(_center_y, _center_y_min, _center_y_max)
         && withinRange(_hip_width, _hip_width_min, _hip_width_max)
@@ -237,32 +223,24 @@ bool BodyModel::withinRange()
         && withinRange(_heigh, _heigh_min, _heigh_max)
         && withinRange(_foot_width, _foot_width_min, _foot_width_max)
         && withinRange(_leg_width * 3 / 2, 0, _foot_width)
+        && withinRange(_center_x, _left_heel.x, _right_heel.x)
         && withinRange(_foot_heigh, _foot_heigh_min, _foot_heigh_max)
-        && withinImage(_center_x + _waist_width, true)
-        && withinImage(_center_y + _chest_heigh, false)
-        && withinImage(_center_x - _waist_width, true)
-        && withinImage(_center_x + _hip_width, true)
-        && withinImage(_center_x - _hip_width, true)
-        && withinImage(_center_y + _chest_heigh + _waist_heigh, false)
-        && withinImage(_right_shoulder.x, true)
-        && withinImage(_left_shoulder.x, true)
-        && withinImage(_center_y + _chest_heigh + _waist_heigh, false)
-        && withinImage(_center_x + _hip_width + _leg_length * cos_right_leg_angle, true)
-        && withinImage(_center_x + _hip_width + _leg_length * cos_right_leg_angle - _leg_width, true)
-        && withinImage(_center_y + _chest_heigh + _waist_heigh + _leg_length * sin_right_leg_angle, false)
-        && withinImage(_center_x - _hip_width - _leg_length * cos_right_leg_angle, true)
-        && withinImage(_center_x - _hip_width - _leg_length * cos_right_leg_angle + _leg_width, true)
-        && withinImage(_center_y - _neck_heigh - _head_radius, false)
-        && withinImage(_right_shoulder.x - _arm_width * sin_right_arm_angle, true)
-        && withinImage(_center_y + _arm_width * cos_right_arm_angle, false)
-        && withinImage(right_hand_center_x + _hand_width * sin_right_arm_angle / 2, true)
-        && withinImage(right_hand_center_y - _hand_width * cos_right_arm_angle / 2, false)
-        && withinImage(_left_shoulder.x + _arm_width * sin_right_arm_angle, true)
-        && withinImage(left_hand_center_x - _hand_width * sin_right_arm_angle / 2, true)
-        && withinImage(_center_x - _hip_width - _leg_length * cos_right_leg_angle + _leg_width - _foot_width, true)
-        && withinImage(_center_x + _hip_width + _leg_length * cos_right_leg_angle - _leg_width + _foot_width, true);
+        && withinImage(_right_shoulder)
+        && withinImage(_left_shoulder)
+        && withinImage(_right_waist)
+        && withinImage(_left_waist)
+        && withinImage(_right_hip)
+        && withinImage(_left_hip)
+        && withinImage(_right_hand_upper)
+        && withinImage(_right_hand_lower)
+        && withinImage(_left_hand_upper)
+        && withinImage(_left_hand_lower)
+        && withinImage(_right_toe)
+        && withinImage(_left_toe)
+        && withinImage(_right_heel)
+        && withinImage(_left_heel)
+        && withinImage(_head_upper);
 }
-
 
 bool BodyModel::validate()
 {
@@ -292,9 +270,9 @@ Mat BodyModel::generateMat()
     drawPolygon(_right_waist, _left_waist, _right_hip, _left_hip);
     drawPolygon(_right_shoulder, _left_shoulder, _right_waist, _left_waist);
     drawPolygon(Point(_center_x + _neck_width, _center_y - _neck_heigh),
-                 Point(_center_x - _neck_width, _center_y - _neck_heigh),
-                 Point(_center_x + _neck_width, _center_y),
-                 Point(_center_x - _neck_width, _center_y));
+        Point(_center_x - _neck_width, _center_y - _neck_heigh),
+        Point(_center_x + _neck_width, _center_y),
+        Point(_center_x - _neck_width, _center_y));
     drawPolygon(_left_shoulder, _left_arm_lower, _left_hand_upper, _left_hand_lower);
     drawPolygon(_right_shoulder, _right_arm_lower, _right_hand_upper, _right_hand_lower);
     drwaCircle(_head_center, _head_radius);
@@ -305,7 +283,8 @@ Mat BodyModel::generateMat()
     return _mask;
 }
 
-void BodyModel::drawTriangle(Point p1, Point p2, Point p3) {
+void BodyModel::drawTriangle(Point p1, Point p2, Point p3)
+{
     Point rook_points[1][3];
     rook_points[0][0] = p1;
     rook_points[0][1] = p2;
@@ -314,7 +293,8 @@ void BodyModel::drawTriangle(Point p1, Point p2, Point p3) {
     int npt[] = { 3 };
     fillPoly(_mask, ppt, npt, 1, Scalar(255, 255, 255), 8);
 }
-void BodyModel::drawPolygon(Point upperRight, Point upperLeft, Point lowerRight, Point lowerLeft) {
+void BodyModel::drawPolygon(Point upperRight, Point upperLeft, Point lowerRight, Point lowerLeft)
+{
     Point rook_points[1][4];
     rook_points[0][0] = upperRight;
     rook_points[0][3] = upperLeft;
@@ -324,12 +304,7 @@ void BodyModel::drawPolygon(Point upperRight, Point upperLeft, Point lowerRight,
     int npt[] = { 4 };
     fillPoly(_mask, ppt, npt, 1, Scalar(255, 255, 255), 8);
 }
-void BodyModel::drwaCircle(Point center, int radius) {
+void BodyModel::drwaCircle(Point center, int radius)
+{
     circle(_mask, center, radius, Scalar(255, 255, 255), -1);
 }
-
-
-
-
-
-

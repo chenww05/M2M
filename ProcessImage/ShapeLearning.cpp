@@ -264,13 +264,13 @@ void execute(Mat* src)
             last_update++;
         }
         if (iteration % 10 == 0) {
-            showImg(model, src);
+            //showImg(model, src);
         }
         iteration++;
 
     }
     showImg(model, src);
-    waitKey(0);
+    //waitKey(0);
 
     //    Mat mask = model->generateMat();
     //    Mat edge, draw;
@@ -305,7 +305,7 @@ void showImg(BodyModel* model, Mat* src)
     }
 
     imwrite("dest.jpg", dest);
-    imshow("Edge Map", dest);
-    waitKey(0);
+    //imshow("Edge Map", dest);
+    //waitKey(0);
     cout << "Updated " << endl;
 }

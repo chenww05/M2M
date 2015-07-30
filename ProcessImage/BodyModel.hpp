@@ -147,7 +147,7 @@ public:
 
 private:
     bool withinRange();
-    bool withinRange(Point);
+    bool withinImage(Point);
     bool withinRange(double value, double value_min, double value_max);
     bool withinRange(int value, int value_min, int value_max);
     bool withinImage(int, bool) ;
