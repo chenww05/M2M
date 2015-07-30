@@ -40,8 +40,14 @@ BodyModel* generateModel(BodyModel* original, int index, int step)
     double right_leg_angle = original->_right_leg_angle;
     double left_arm_angle = original->_left_arm_angle;
     double right_arm_angle = original->_right_arm_angle;
-    int foot_width = original->_foot_width;
-    int foot_heigh = original->_foot_heigh;
+    int left_foot_width = original->_left_foot_width;
+    int right_foot_width = original->_right_foot_width;
+    int left_foot_heigh = original->_left_foot_heigh;
+    int right_foot_heigh = original->_right_foot_heigh;
+    double left_knee_angle = original->_left_knee_angle;
+    double right_knee_angle = original->_right_knee_angle;
+    int knee_width = original->_knee_width;
+    int shoulder_heigh = original->_shoulder_heigh;
     CV_Assert(index < NUM_BODY_INPUT_POINTS && index >= 0);
     switch (index) {
     case 0:
@@ -102,10 +108,28 @@ BodyModel* generateModel(BodyModel* original, int index, int step)
         right_arm_angle += step;
         break;
     case 19:
-        foot_width += step;
+        left_foot_width += step;
         break;
     case 20:
-        foot_heigh += step;
+        right_foot_width += step;
+        break;
+    case 21:
+        left_foot_heigh += step;
+        break;
+    case 22:
+        right_foot_heigh += step;
+        break;
+    case 23:
+        left_knee_angle += step;
+        break;
+    case 24:
+        right_knee_angle += step;
+        break;
+    case 25:
+        knee_width += step;
+        break;
+    case 26:
+        shoulder_heigh += step;
         break;
     default:
         break;
@@ -114,7 +138,9 @@ BodyModel* generateModel(BodyModel* original, int index, int step)
     BodyModel* model = new BodyModel(hip_width, shoulder_width, chest_heigh, head_radius,
         neck_heigh, neck_width, arm_length, arm_width, hand_width,
         leg_length, leg_width, waist_width, waist_heigh, center_x,
-        center_y, img_width, img_heigh, left_leg_angle, right_leg_angle, left_arm_angle, right_arm_angle, foot_width, foot_heigh);
+        center_y, img_width, img_heigh, left_leg_angle, right_leg_angle, left_arm_angle, right_arm_angle, left_foot_width, right_foot_width, left_foot_heigh, right_foot_heigh, left_knee_angle,
+        right_knee_angle,
+        knee_width, shoulder_heigh);
     return model;
 }
 
@@ -123,7 +149,7 @@ BodyModel* findBestModel(BodyModel* model, int index, Mat* src, bool& hasUpdate)
     int iteration = 0;
     const int max_iteration = 200;
     int last_similar = 0;
-    int max_last_similar = 20;
+    int max_last_similar = 10;
     int max_step = 15;
     Mat mask = model->generateMat();
     double distance = getAvgDistance(&mask, src);
@@ -218,35 +244,43 @@ void execute(Mat* src)
     double heigh = 1280;
     int hip_width = 150;
     int shoulder_width = 150;
-    int chest_heigh = 250;
-    int head_radius = 100;
+    int chest_heigh = 200;
+    int head_radius = 80;
     int neck_heigh = 100;
     int neck_width = 50;
     int arm_length = 400;
     int arm_width = 100;
     int hand_width = 50;
-    int leg_length = 600;
+    int leg_length = 550;
     int leg_width = 40;
     int waist_width = 120;
-    int waist_heigh = 150;
+    int waist_heigh = 200;
     double left_leg_angle = 85;
     double right_leg_angle = 85;
     double left_arm_angle = 60;
     double right_arm_angle = 60;
-    int foot_width = 80;
-    int foot_heigh = 120;
+    int left_foot_width = 80;
+    int right_foot_width = 80;
+    int left_foot_heigh = 120;
+    int right_foot_heigh = 120;
+    double left_knee_angle = 85;
+    double right_knee_angle = 85;
+    int knee_width = 80;
+    int shoulder_heigh = 80;
     int center_x = 515;
-    int center_y = 280;
+    int center_y = 300;
     BodyModel* model = new BodyModel(hip_width, shoulder_width, chest_heigh, head_radius,
         neck_heigh, neck_width, arm_length, arm_width, hand_width,
         leg_length, leg_width, waist_width, waist_heigh, center_x,
-        center_y, width, heigh, left_leg_angle, right_leg_angle, left_arm_angle, right_arm_angle, foot_width, foot_heigh);
+        center_y, width, heigh, left_leg_angle, right_leg_angle, left_arm_angle, right_arm_angle, left_foot_width, right_foot_width, left_foot_heigh, right_foot_heigh, left_knee_angle,
+        right_knee_angle,
+        knee_width, shoulder_heigh);
 
     CV_Assert(model->validate());
     srand((uchar)time(NULL));
     int index = 0;
     int iteration = 0;
-    int max_iteration = 200;
+    int max_iteration = 1000;
     int last_update = 0;
     int max_update = 20;
     while (iteration < max_iteration && last_update < max_update) {
@@ -264,12 +298,12 @@ void execute(Mat* src)
             last_update++;
         }
         if (iteration % 10 == 0) {
-            //showImg(model, src);
+            showImg(model, src);
         }
         iteration++;
-
     }
     showImg(model, src);
+    model->printOut();
     //waitKey(0);
 
     //    Mat mask = model->generateMat();

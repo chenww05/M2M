@@ -34,8 +34,14 @@ BodyModel::BodyModel(
     double right_leg_angle,
     double left_arm_angle,
     double right_arm_angle,
-    int foot_width,
-    int foot_heigh)
+    int left_foot_width,
+    int right_foot_width,
+    int left_foot_heigh,
+    int right_foot_heigh,
+    double left_knee_angle,
+    double right_knee_angle,
+    int knee_width,
+    int shoulder_heigh)
 {
     _img_width = img_width;
     _img_heigh = img_heigh;
@@ -86,22 +92,35 @@ BodyModel::BodyModel(
     _waist_heigh_min = _img_heigh / 10, _waist_heigh_max = _img_heigh / 2;
 
     _left_leg_angle = left_leg_angle;
-    _left_leg_angle_min = 60.0, _left_leg_angle_max = 89.0;
+    _leg_angle_min = 60.0, _leg_angle_max = 89.0;
 
     _right_leg_angle = right_leg_angle;
-    _right_leg_angle_min = 60.0, _right_leg_angle_max = 89.0;
 
     _left_arm_angle = left_arm_angle;
-    _left_arm_angle_min = 45.0, _left_arm_angle_max = 70.0;
+    _arm_angle_min = 45.0, _arm_angle_max = 70.0;
 
     _right_arm_angle = right_arm_angle;
-    _right_arm_angle_min = 45.0, _right_arm_angle_max = 70.0;
 
-    _foot_heigh = foot_heigh;
+    _left_foot_heigh = left_foot_heigh;
+    _right_foot_heigh = right_foot_heigh;
     _foot_heigh_min = _img_heigh / 30, _foot_heigh_max = _img_heigh / 8;
 
-    _foot_width = foot_width;
+    _left_foot_width = left_foot_width;
+    _right_foot_width = right_foot_width;
     _foot_width_min = _img_width / 30, _foot_width_max = _img_width / 8;
+
+    _left_knee_angle = left_knee_angle;
+    _left_knee_angle_min = _leg_angle_min > _left_leg_angle - 30 ? _leg_angle_min : _left_leg_angle - 30;
+    _left_knee_angle_max = _leg_angle_max < _left_leg_angle + 30 ? _leg_angle_max : _left_leg_angle + 30;
+    _right_knee_angle = right_knee_angle;
+    _right_knee_angle_min = _leg_angle_min > _right_leg_angle - 30 ? _leg_angle_min : _right_leg_angle - 30;
+    _right_knee_angle_max = _leg_angle_max < _right_leg_angle + 30 ? _leg_angle_max : _right_leg_angle + 30;
+
+    _knee_width = knee_width;
+    _knee_width_min = _img_width / 60, _knee_width_max = _img_width / 8;
+
+    _shoulder_heigh = shoulder_heigh;
+    _shoulder_heigh_min = _img_heigh / 120, _shoulder_heigh_max = _head_radius < _neck_heigh ? _head_radius : _neck_heigh;
 
     _heigh = _head_radius + _neck_heigh + _chest_heigh + _waist_heigh + _leg_length;
     _heigh_min = _img_heigh / 2, _heigh_max = _img_heigh;
@@ -155,21 +174,36 @@ BodyModel::BodyModel(
     double sin_left_leg_angle = sin(_left_leg_angle / 180 * PI);
     double cos_right_leg_angle = cos(_right_leg_angle / 180 * PI);
     double sin_right_leg_angle = sin(_right_leg_angle / 180 * PI);
+    double cos_left_knee_angle = cos(_left_knee_angle / 180 * PI);
+    double sin_left_knee_angle = sin(_left_knee_angle / 180 * PI);
+    double cos_right_knee_angle = cos(_right_knee_angle / 180 * PI);
+    double sin_right_knee_angle = sin(_right_knee_angle / 180 * PI);
 
-    _right_footrope = Point(_right_hip.x + _leg_length * cos_right_leg_angle,
-        _right_hip.y + _leg_length * sin_right_leg_angle);
+    _right_knee = Point(_right_hip.x + _leg_length * cos_right_leg_angle / 2,
+        _right_hip.y + _leg_length * sin_right_leg_angle / 2);
+
+    _right_knee_inner = Point(_right_knee.x - _knee_width, _right_knee.y);
+
+    _right_footrope = Point(_right_knee.x + _leg_length * cos_right_knee_angle / 2,
+        _right_knee.y + _leg_length * sin_right_knee_angle / 2);
+
     _right_heel = Point(_right_footrope.x - _leg_width, _right_footrope.y);
 
-    _left_footrope = Point(_left_hip.x - _leg_length * cos_left_leg_angle,
-        _left_hip.y + _leg_length * sin_left_leg_angle);
+    _left_knee = Point(_left_hip.x - _leg_length * cos_left_leg_angle / 2,
+        _left_hip.y + _leg_length * sin_left_leg_angle / 2);
+
+    _left_knee_inner = Point(_left_knee.x + _knee_width, _left_knee.y);
+
+    _left_footrope = Point(_left_knee.x - _leg_length * cos_left_knee_angle / 2,
+        _left_knee.y + _leg_length * sin_left_knee_angle / 2);
     _left_heel = Point(_left_footrope.x + _leg_width, _left_footrope.y);
 
     //Derive feet
-    _right_toe = Point(_right_heel.x + _foot_width, _right_heel.y);
-    _right_heel_upper = Point(_right_heel.x, _right_heel.y - _foot_heigh);
+    _right_toe = Point(_right_heel.x + _right_foot_width, _right_heel.y);
+    _right_heel_upper = Point(_right_heel.x, _right_heel.y - _right_foot_heigh);
 
-    _left_toe = Point(_left_heel.x - _foot_width, _left_heel.y);
-    _left_heel_upper = Point(_left_heel.x, _left_heel.y - _foot_heigh);
+    _left_toe = Point(_left_heel.x - _left_foot_width, _left_heel.y);
+    _left_heel_upper = Point(_left_heel.x, _left_heel.y - _left_foot_heigh);
 
     //Derive head
     _head_center = Point(_center_x, _center_y - _neck_heigh);
@@ -216,15 +250,26 @@ bool BodyModel::withinRange()
         && withinRange(_leg_width, _leg_width_min, _leg_width_max)
         && withinRange(_waist_width, _waist_width_min, _waist_width_max)
         && withinRange(_waist_heigh, _waist_heigh_min, _waist_heigh_max)
-        && withinRange(_left_leg_angle, _left_leg_angle_min, _left_leg_angle_max)
-        && withinRange(_right_leg_angle, _right_leg_angle_min, _right_leg_angle_max)
-        && withinRange(_left_arm_angle, _left_arm_angle_min, _left_arm_angle_max)
-        && withinRange(_right_arm_angle, _right_arm_angle_min, _right_arm_angle_max)
+        && withinRange(_left_leg_angle, _leg_angle_min, _leg_angle_max)
+        && withinRange(_right_leg_angle, _leg_angle_min, _leg_angle_max)
+        && withinRange(_left_arm_angle, _arm_angle_min, _arm_angle_max)
+        && withinRange(_right_arm_angle, _arm_angle_min, _arm_angle_max)
         && withinRange(_heigh, _heigh_min, _heigh_max)
-        && withinRange(_foot_width, _foot_width_min, _foot_width_max)
-        && withinRange(_leg_width * 3 / 2, 0, _foot_width)
+        && withinRange(_left_foot_width, _foot_width_min, _foot_width_max)
+        && withinRange(_right_foot_width, _foot_width_min, _foot_width_max)
+        && withinRange(_right_knee_angle, _right_knee_angle_min, _right_knee_angle_max)
+        && withinRange(_left_knee_angle, _left_knee_angle_min, _left_knee_angle_max)
+        && withinRange(_knee_width, _knee_width_min, _knee_width_max)
+        && withinRange(_center_x, _left_knee_inner.x, _right_knee_inner.x) // the two knees
+        && withinRange(_shoulder_heigh, _shoulder_heigh_min, _shoulder_heigh_max)
+
+        && withinRange(_leg_width * 3 / 2, 0, _left_foot_width)
+        && withinRange(_leg_width * 3 / 2, 0, _right_foot_width)
+
         && withinRange(_center_x, _left_heel.x, _right_heel.x)
-        && withinRange(_foot_heigh, _foot_heigh_min, _foot_heigh_max)
+        && withinRange(_left_foot_heigh, _foot_heigh_min, _foot_heigh_max)
+        && withinRange(_right_foot_heigh, _foot_heigh_min, _foot_heigh_max)
+
         && withinImage(_right_shoulder)
         && withinImage(_left_shoulder)
         && withinImage(_right_waist)
@@ -267,19 +312,36 @@ bool BodyModel::validate()
 Mat BodyModel::generateMat()
 {
     _mask = Mat::zeros(_img_heigh, _img_width, CV_8UC3);
+    // draw waist
     drawPolygon(_right_waist, _left_waist, _right_hip, _left_hip);
+    // draw chest
     drawPolygon(_right_shoulder, _left_shoulder, _right_waist, _left_waist);
+    // draw neck
     drawPolygon(Point(_center_x + _neck_width, _center_y - _neck_heigh),
         Point(_center_x - _neck_width, _center_y - _neck_heigh),
         Point(_center_x + _neck_width, _center_y),
         Point(_center_x - _neck_width, _center_y));
+    // draw left arm
     drawPolygon(_left_shoulder, _left_arm_lower, _left_hand_upper, _left_hand_lower);
+    // draw right arm
     drawPolygon(_right_shoulder, _right_arm_lower, _right_hand_upper, _right_hand_lower);
+    // draw head
     drwaCircle(_head_center, _head_radius);
-    drawPolygon(_left_hip, _mid_hip, _left_footrope, _left_heel);
-    drawPolygon(_right_hip, _mid_hip, _right_footrope, _right_heel);
+    // draw left leg
+    drawPolygon(_left_hip, _mid_hip, _left_knee, _left_knee_inner);
+    // draw right leg
+    drawPolygon(_right_hip, _mid_hip, _right_knee, _right_knee_inner);
+    // draw left limb
+    drawPolygon(_left_knee, _left_knee_inner, _left_footrope, _left_heel);
+    // draw right limb
+    drawPolygon(_right_knee, _right_knee_inner, _right_footrope, _right_heel);
+    // draw left foot
     drawTriangle(_left_heel, _left_toe, _left_heel_upper);
+    // draw right foot
     drawTriangle(_right_heel, _right_toe, _right_heel_upper);
+    // draw shoulder
+    drawTriangle(_right_shoulder, _left_shoulder, Point(_center_x, _center_y - _shoulder_heigh));
+
     return _mask;
 }
 
@@ -307,4 +369,33 @@ void BodyModel::drawPolygon(Point upperRight, Point upperLeft, Point lowerRight,
 void BodyModel::drwaCircle(Point center, int radius)
 {
     circle(_mask, center, radius, Scalar(255, 255, 255), -1);
+}
+
+void BodyModel::printOut()
+{
+    cout << _hip_width << " "
+         << _shoulder_width << " "
+         << _chest_heigh << " "
+         << _head_radius << " "
+         << _neck_heigh << " "
+         << _neck_width << " "
+         << _arm_length << " "
+         << _arm_width << " "
+         << _hand_width << " "
+         << _leg_length << " "
+         << _leg_width << " "
+         << _waist_width << " "
+         << _waist_heigh << " "
+         << _left_leg_angle << " "
+         << _right_leg_angle << " "
+         << _left_arm_angle << " "
+         << _right_arm_angle << " "
+         << _left_foot_width << " "
+         << _right_foot_width << " "
+         << _left_foot_heigh << " "
+         << _right_foot_heigh << " "
+         << _left_knee_angle << " "
+         << _right_knee_angle << " "
+         << _knee_width << " "
+         << _shoulder_heigh << endl;
 }

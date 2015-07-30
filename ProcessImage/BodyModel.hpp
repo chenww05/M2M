@@ -24,7 +24,7 @@ using namespace cv;
 using namespace std;
 
 #define PI 3.14159
-#define NUM_BODY_INPUT_POINTS 21
+#define NUM_BODY_INPUT_POINTS 27
 
 class BodyModel {
 public:
@@ -77,22 +77,32 @@ public:
     int _img_heigh;
     
     double _left_leg_angle;
-    double _left_leg_angle_min, _left_leg_angle_max;
-    
     double _right_leg_angle;
-    double _right_leg_angle_min, _right_leg_angle_max;
+    double _leg_angle_min, _leg_angle_max;
     
     double _left_arm_angle;
-    double _left_arm_angle_min, _left_arm_angle_max;
-    
     double _right_arm_angle;
-    double _right_arm_angle_min, _right_arm_angle_max;
+    double _arm_angle_min, _arm_angle_max;
     
-    int _foot_width;
+    
+    int _left_foot_width;
+    int _right_foot_width;
     int _foot_width_min, _foot_width_max;
     
-    int _foot_heigh;
+    int _left_foot_heigh;
+    int _right_foot_heigh;
     int _foot_heigh_min, _foot_heigh_max;
+    
+    double _left_knee_angle;
+    double _right_knee_angle;
+    double _left_knee_angle_min, _left_knee_angle_max;
+    double _right_knee_angle_min, _right_knee_angle_max;
+    
+    int _knee_width;
+    int _knee_width_min, _knee_width_max;
+    
+    int _shoulder_heigh;
+    int _shoulder_heigh_min, _shoulder_heigh_max;
     
     //derived
     int _heigh;
@@ -107,6 +117,12 @@ public:
     Point _right_hip;
     Point _left_hip;
     Point _mid_hip;
+    
+    Point _right_knee;
+    Point _left_knee;
+    
+    Point _right_knee_inner;
+    Point _left_knee_inner;
     
     Point _right_heel;
     Point _left_heel;
@@ -140,9 +156,10 @@ public:
     
     Mat _mask;
     BodyModel();
-    BodyModel(int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, double, double, double, double, int, int);
+    BodyModel(int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, double, double, double, double, int, int, int, int, double, double, int, int);
     Mat generateMat();
     bool validate();
+    void printOut();
 
 
 private:
