@@ -143,26 +143,17 @@ public:
     BodyModel(int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, double, double, double, double, int, int);
     Mat generateMat();
     bool validate();
-    BodyModel* generateNextValidBodyModel();
 
 
 private:
-    void generateWaist();
-    void generateChest();
-    void generateNeck();
-    void generateLeftArm();
-    void generateRightArm();
-    void generateHead();
-    void generateLeftLeg();
-    void generateRightLeg();
-    void generateLeftFoot();
-    void generateRightFoot();
-
     bool withinRange();
     bool withinRange(Point);
     bool withinRange(double value, double value_min, double value_max);
     bool withinRange(int value, int value_min, int value_max);
     bool withinImage(int, bool) ;
+    void drawTriangle(Point, Point, Point);
+    void drawPolygon(Point, Point, Point, Point);
+    void drwaCircle(Point, int);
 
 
 };

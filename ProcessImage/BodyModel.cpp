@@ -170,6 +170,10 @@ BodyModel::BodyModel(
 
     _left_toe = Point(_left_heel.x - _foot_width, _left_heel.y);
     _left_heel_upper = Point(_left_heel.x, _left_heel.y - _foot_heigh);
+    
+    //Derive head
+    _head_center = Point(_center_x, _center_y - _neck_heigh);
+    _head_upper = Point(_center_x, _center_y - neck_heigh - _head_radius);
 }
 
 bool BodyModel::withinRange(Point point)
@@ -285,121 +289,47 @@ bool BodyModel::validate()
 Mat BodyModel::generateMat()
 {
     _mask = Mat::zeros(_img_heigh, _img_width, CV_8UC3);
-    generateWaist();
-    generateChest();
-    generateNeck();
-    generateLeftArm();
-    generateRightArm();
-    generateHead();
-    generateLeftLeg();
-    generateRightLeg();
-    generateLeftFoot();
-    generateRightFoot();
+    drawPolygon(_right_waist, _left_waist, _right_hip, _left_hip);
+    drawPolygon(_right_shoulder, _left_shoulder, _right_waist, _left_waist);
+    drawPolygon(Point(_center_x + _neck_width, _center_y - _neck_heigh),
+                 Point(_center_x - _neck_width, _center_y - _neck_heigh),
+                 Point(_center_x + _neck_width, _center_y),
+                 Point(_center_x - _neck_width, _center_y));
+    drawPolygon(_left_shoulder, _left_arm_lower, _left_hand_upper, _left_hand_lower);
+    drawPolygon(_right_shoulder, _right_arm_lower, _right_hand_upper, _right_hand_lower);
+    drwaCircle(_head_center, _head_radius);
+    drawPolygon(_left_hip, _mid_hip, _left_footrope, _left_heel);
+    drawPolygon(_right_hip, _mid_hip, _right_footrope, _right_heel);
+    drawTriangle(_left_heel, _left_toe, _left_heel_upper);
+    drawTriangle(_right_heel, _right_toe, _right_heel_upper);
     return _mask;
 }
 
-void BodyModel::generateNeck()
-{
-    Point rook_points[1][4];
-    rook_points[0][0] = Point(_center_x + _neck_width, _center_y - _neck_heigh);
-    rook_points[0][3] = Point(_center_x - _neck_width, _center_y - _neck_heigh);
-    rook_points[0][1] = Point(_center_x + _neck_width, _center_y);
-    rook_points[0][2] = Point(_center_x - _neck_width, _center_y);
-    const Point* ppt[1] = { rook_points[0] };
-    int npt[] = { 4 };
-    fillPoly(_mask, ppt, npt, 1, Scalar(255, 255, 255), 8);
-}
-void BodyModel::generateLeftArm()
-{
-    Point rook_points[1][4];
-    rook_points[0][0] = _left_shoulder;
-    rook_points[0][3] = _left_arm_lower;
-    rook_points[0][1] = _left_hand_upper;
-    rook_points[0][2] = _left_hand_lower;
-    const Point* ppt[1] = { rook_points[0] };
-    int npt[] = { 4 };
-    fillPoly(_mask, ppt, npt, 1, Scalar(255, 255, 255), 8);
-}
-void BodyModel::generateRightArm()
-{
-    Point rook_points[1][4];
-    rook_points[0][0] = _right_shoulder;
-    rook_points[0][3] = _right_arm_lower;
-    rook_points[0][1] = _right_hand_upper;
-    rook_points[0][2] = _right_hand_lower;
-    const Point* ppt[1] = { rook_points[0] };
-    int npt[] = { 4 };
-    fillPoly(_mask, ppt, npt, 1, Scalar(255, 255, 255), 8);
-}
-void BodyModel::generateHead()
-{
-    circle(_mask, Point(_center_x, _center_y - _neck_heigh), _head_radius, Scalar(255, 255, 255), -1);
-}
-void BodyModel::generateLeftLeg()
-{
-    Point rook_points[1][4];
-    rook_points[0][0] = _left_hip;
-    rook_points[0][3] = _mid_hip;
-    rook_points[0][1] = _left_footrope;
-    rook_points[0][2] = _left_heel;
-    const Point* ppt[1] = { rook_points[0] };
-    int npt[] = { 4 };
-    fillPoly(_mask, ppt, npt, 1, Scalar(255, 255, 255), 8);
-}
-
-void BodyModel::generateRightLeg()
-{
-    Point rook_points[1][4];
-    rook_points[0][0] = _right_hip;
-    rook_points[0][3] = _mid_hip;
-    rook_points[0][1] = _right_footrope;
-    rook_points[0][2] = _right_heel;
-    const Point* ppt[1] = { rook_points[0] };
-    int npt[] = { 4 };
-    fillPoly(_mask, ppt, npt, 1, Scalar(255, 255, 255), 8);
-}
-void BodyModel::generateLeftFoot()
-{
+void BodyModel::drawTriangle(Point p1, Point p2, Point p3) {
     Point rook_points[1][3];
-    rook_points[0][0] = _left_heel;
-    rook_points[0][1] = _left_toe;
-    rook_points[0][2] = _left_heel_upper;
+    rook_points[0][0] = p1;
+    rook_points[0][1] = p2;
+    rook_points[0][2] = p3;
     const Point* ppt[1] = { rook_points[0] };
     int npt[] = { 3 };
     fillPoly(_mask, ppt, npt, 1, Scalar(255, 255, 255), 8);
 }
-
-void BodyModel::generateRightFoot()
-{
-    Point rook_points[1][3];
-    rook_points[0][0] = _right_heel;
-    rook_points[0][1] = _right_toe;
-    rook_points[0][2] = _right_heel_upper;
-    const Point* ppt[1] = { rook_points[0] };
-    int npt[] = { 3 };
-    fillPoly(_mask, ppt, npt, 1, Scalar(255, 255, 255), 8);
-}
-
-void BodyModel::generateChest()
-{
+void BodyModel::drawPolygon(Point upperRight, Point upperLeft, Point lowerRight, Point lowerLeft) {
     Point rook_points[1][4];
-    rook_points[0][0] = _right_shoulder;
-    rook_points[0][3] = _left_shoulder;
-    rook_points[0][1] = _right_waist;
-    rook_points[0][2] = _left_waist;
+    rook_points[0][0] = upperRight;
+    rook_points[0][3] = upperLeft;
+    rook_points[0][1] = lowerRight;
+    rook_points[0][2] = lowerLeft;
     const Point* ppt[1] = { rook_points[0] };
     int npt[] = { 4 };
     fillPoly(_mask, ppt, npt, 1, Scalar(255, 255, 255), 8);
 }
-
-void BodyModel::generateWaist()
-{
-    Point rook_points[1][4];
-    rook_points[0][0] = _right_waist;
-    rook_points[0][3] = _left_waist;
-    rook_points[0][1] = _right_hip;
-    rook_points[0][2] = _left_hip;
-    const Point* ppt[1] = { rook_points[0] };
-    int npt[] = { 4 };
-    fillPoly(_mask, ppt, npt, 1, Scalar(255, 255, 255), 8);
+void BodyModel::drwaCircle(Point center, int radius) {
+    circle(_mask, center, radius, Scalar(255, 255, 255), -1);
 }
+
+
+
+
+
+

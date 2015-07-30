@@ -263,10 +263,11 @@ void execute(Mat* src)
         else {
             last_update++;
         }
-        iteration++;
         if (iteration % 10 == 0) {
-            //showImg(model, src);
+            showImg(model, src);
         }
+        iteration++;
+
     }
     showImg(model, src);
     waitKey(0);
