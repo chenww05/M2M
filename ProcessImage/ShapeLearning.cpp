@@ -298,11 +298,11 @@ void execute(Mat* src)
             last_update++;
         }
         if (iteration % 10 == 0) {
-            showImg(model, src);
+            showImg(model, src, iteration / 10);
         }
         iteration++;
     }
-    showImg(model, src);
+    //showImg(model, src, iteration);
     model->printOut();
     //waitKey(0);
 
@@ -321,7 +321,7 @@ void execute(Mat* src)
     //    imwrite("src.jpg", *src);
 }
 
-void showImg(BodyModel* model, Mat* src)
+void showImg(BodyModel* model, Mat* src, int iteration)
 {
     Mat edge, draw;
     Mat dest;
@@ -338,7 +338,10 @@ void showImg(BodyModel* model, Mat* src)
         }
     }
 
-    imwrite("dest.jpg", dest);
+    string Result;
+    ostringstream convert;
+    convert << iteration;
+    imwrite("dest" +  convert.str() + ".jpg", dest);
     //imshow("Edge Map", dest);
     //waitKey(0);
     cout << "Updated " << endl;
