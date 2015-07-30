@@ -27,6 +27,8 @@ using namespace std;
 #define NUM_BODY_INPUT_POINTS 17
 
 class BodyModel {
+public:
+
     int _hip_width;
     int _hip_width_min, _hip_width_max;
     
@@ -84,7 +86,6 @@ class BodyModel {
     int _heigh_min, _heigh_max;
     
     Mat _mask;
-public:
     BodyModel();
     BodyModel(int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, double, double);
     Mat generateMat();

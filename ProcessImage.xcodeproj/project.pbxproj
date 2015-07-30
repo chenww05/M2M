@@ -7,8 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		55770B831B669FB80086E443 /* EdgeScan.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 55770B811B669FB80086E443 /* EdgeScan.cpp */; };
-		55AD6A441B67E64E0020E96A /* ShapeGen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 55AD6A421B67E64E0020E96A /* ShapeGen.cpp */; };
 		55AD6A471B67FF5D0020E96A /* ShapeDiff.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 55AD6A451B67FF5D0020E96A /* ShapeDiff.cpp */; };
 		55AD6A4A1B681BC40020E96A /* ShapeLearning.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 55AD6A481B681BC40020E96A /* ShapeLearning.cpp */; };
 		55AD6A4D1B683FFB0020E96A /* BasicMath.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 55AD6A4B1B683FFB0020E96A /* BasicMath.cpp */; };
@@ -29,10 +27,6 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		55770B811B669FB80086E443 /* EdgeScan.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EdgeScan.cpp; sourceTree = "<group>"; };
-		55770B821B669FB80086E443 /* EdgeScan.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = EdgeScan.hpp; sourceTree = "<group>"; };
-		55AD6A421B67E64E0020E96A /* ShapeGen.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ShapeGen.cpp; sourceTree = "<group>"; };
-		55AD6A431B67E64E0020E96A /* ShapeGen.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = ShapeGen.hpp; sourceTree = "<group>"; };
 		55AD6A451B67FF5D0020E96A /* ShapeDiff.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ShapeDiff.cpp; sourceTree = "<group>"; };
 		55AD6A461B67FF5D0020E96A /* ShapeDiff.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = ShapeDiff.hpp; sourceTree = "<group>"; };
 		55AD6A481B681BC40020E96A /* ShapeLearning.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ShapeLearning.cpp; sourceTree = "<group>"; };
@@ -76,10 +70,6 @@
 			isa = PBXGroup;
 			children = (
 				55CA6B9D1B5F5F7F00C36D3D /* main.cpp */,
-				55770B811B669FB80086E443 /* EdgeScan.cpp */,
-				55770B821B669FB80086E443 /* EdgeScan.hpp */,
-				55AD6A421B67E64E0020E96A /* ShapeGen.cpp */,
-				55AD6A431B67E64E0020E96A /* ShapeGen.hpp */,
 				55AD6A451B67FF5D0020E96A /* ShapeDiff.cpp */,
 				55AD6A461B67FF5D0020E96A /* ShapeDiff.hpp */,
 				55AD6A481B681BC40020E96A /* ShapeLearning.cpp */,
@@ -149,12 +139,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				55AD6A471B67FF5D0020E96A /* ShapeDiff.cpp in Sources */,
-				55AD6A441B67E64E0020E96A /* ShapeGen.cpp in Sources */,
 				55AD6A501B6880C30020E96A /* BodyModel.cpp in Sources */,
 				55AD6A4D1B683FFB0020E96A /* BasicMath.cpp in Sources */,
 				55CA6B9E1B5F5F7F00C36D3D /* main.cpp in Sources */,
 				55AD6A4A1B681BC40020E96A /* ShapeLearning.cpp in Sources */,
-				55770B831B669FB80086E443 /* EdgeScan.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

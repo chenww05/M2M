@@ -34,8 +34,7 @@ dependencies: \
   /usr/local/include/opencv2/imgcodecs/imgcodecs_c.h \
   /usr/local/include/opencv2/videoio/videoio_c.h \
   /usr/local/include/opencv2/videoio/videoio.hpp \
-  /Users/weiweich/Documents/M2M/ProcessImage/ProcessImage/ProcessImage/ShapeGen.hpp \
-  /usr/local/include/opencv2/core/core.hpp \
   /Users/weiweich/Documents/M2M/ProcessImage/ProcessImage/ProcessImage/ShapeDiff.hpp \
+  /usr/local/include/opencv2/core/core.hpp \
   /Users/weiweich/Documents/M2M/ProcessImage/ProcessImage/ProcessImage/ShapeLearning.hpp \
   /Users/weiweich/Documents/M2M/ProcessImage/ProcessImage/ProcessImage/BodyModel.hpp
