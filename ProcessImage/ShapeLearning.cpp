@@ -48,6 +48,9 @@ BodyModel* generateModel(BodyModel* original, int index, int step)
     double right_knee_angle = original->_right_knee_angle;
     int knee_width = original->_knee_width;
     int shoulder_heigh = original->_shoulder_heigh;
+    int elbow_width = original->_elbow_width;
+    double left_elbow_angle = original->_left_elbow_angle;
+    double right_elbow_angle = original->_right_elbow_angle;
     CV_Assert(index < NUM_BODY_INPUT_POINTS && index >= 0);
     switch (index) {
     case 0:
@@ -131,6 +134,15 @@ BodyModel* generateModel(BodyModel* original, int index, int step)
     case 26:
         shoulder_heigh += step;
         break;
+        case 27:
+            elbow_width += step;
+            break;
+        case 28:
+            left_elbow_angle += step;
+            break;
+        case 29:
+            right_elbow_angle += step;
+            break;
     default:
         break;
     }
@@ -140,14 +152,14 @@ BodyModel* generateModel(BodyModel* original, int index, int step)
         leg_length, leg_width, waist_width, waist_heigh, center_x,
         center_y, img_width, img_heigh, left_leg_angle, right_leg_angle, left_arm_angle, right_arm_angle, left_foot_width, right_foot_width, left_foot_heigh, right_foot_heigh, left_knee_angle,
         right_knee_angle,
-        knee_width, shoulder_heigh);
+        knee_width, shoulder_heigh, elbow_width, left_elbow_angle, right_elbow_angle);
     return model;
 }
 
 BodyModel* findBestModel(BodyModel* model, int index, Mat* src, bool& hasUpdate)
 {
     int iteration = 0;
-    const int max_iteration = 200;
+    const int max_iteration = 150;
     int last_similar = 0;
     int max_last_similar = 10;
     int max_step = 15;
@@ -267,6 +279,9 @@ void execute(Mat* src)
     double right_knee_angle = 85;
     int knee_width = 80;
     int shoulder_heigh = 80;
+    int elbow_width = 90;
+    double left_elbow_angle = 60;
+    double right_elbow_angle = 60;
     int center_x = 515;
     int center_y = 300;
     BodyModel* model = new BodyModel(hip_width, shoulder_width, chest_heigh, head_radius,
@@ -274,7 +289,7 @@ void execute(Mat* src)
         leg_length, leg_width, waist_width, waist_heigh, center_x,
         center_y, width, heigh, left_leg_angle, right_leg_angle, left_arm_angle, right_arm_angle, left_foot_width, right_foot_width, left_foot_heigh, right_foot_heigh, left_knee_angle,
         right_knee_angle,
-        knee_width, shoulder_heigh);
+        knee_width, shoulder_heigh, elbow_width, left_elbow_angle, right_elbow_angle);
 
     CV_Assert(model->validate());
     srand((uchar)time(NULL));
@@ -282,13 +297,13 @@ void execute(Mat* src)
     int iteration = 0;
     int max_iteration = 1000;
     int last_update = 0;
-    int max_update = 20;
+    int max_update = NUM_BODY_INPUT_POINTS ;
     while (iteration < max_iteration && last_update < max_update) {
-        int current_index = rand() % NUM_BODY_INPUT_POINTS;
-        if (index == current_index) {
-            continue;
-        }
-        index = current_index;
+//        int current_index = rand() % NUM_BODY_INPUT_POINTS;
+//        if (index == current_index) {
+//            continue;
+//        }
+//        index = current_index;
         bool hasUpdate = false;
         model = findBestModel(model, index, src, hasUpdate);
         if (hasUpdate) {
@@ -301,6 +316,8 @@ void execute(Mat* src)
             showImg(model, src, iteration / 10);
         }
         iteration++;
+        index ++;
+        index = index % NUM_BODY_INPUT_POINTS;
     }
     //showImg(model, src, iteration);
     model->printOut();

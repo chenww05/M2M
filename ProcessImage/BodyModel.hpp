@@ -24,7 +24,7 @@ using namespace cv;
 using namespace std;
 
 #define PI 3.14159
-#define NUM_BODY_INPUT_POINTS 27
+#define NUM_BODY_INPUT_POINTS 30
 
 class BodyModel {
 public:
@@ -104,6 +104,15 @@ public:
     int _shoulder_heigh;
     int _shoulder_heigh_min, _shoulder_heigh_max;
     
+    int _elbow_width;
+    int _elbow_width_min, _elbow_width_max;
+    
+    double _left_elbow_angle;
+    double _left_elbow_angle_min, _left_elbow_angle_max;
+
+    double _right_elbow_angle;
+    double _right_elbow_angle_min, _right_elbow_angle_max;
+    
     //derived
     int _heigh;
     int _heigh_min, _heigh_max;
@@ -154,9 +163,17 @@ public:
     Point _head_upper;
     Point _head_center;
     
+    Point _right_elbow_center;
+    Point _right_elbow_upper;
+    Point _right_elbow_lower;
+    
+    Point _left_elbow_center;
+    Point _left_elbow_upper;
+    Point _left_elbow_lower;
+    
     Mat _mask;
     BodyModel();
-    BodyModel(int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, double, double, double, double, int, int, int, int, double, double, int, int);
+    BodyModel(int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, double, double, double, double, int, int, int, int, double, double, int, int, int ,double, double);
     Mat generateMat();
     bool validate();
     void printOut();

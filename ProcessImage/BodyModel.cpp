@@ -41,7 +41,9 @@ BodyModel::BodyModel(
     double left_knee_angle,
     double right_knee_angle,
     int knee_width,
-    int shoulder_heigh)
+    int shoulder_heigh,
+                     int elbow_width, double left_elbow_angle, double right_elbow_angle
+                     )
 {
     _img_width = img_width;
     _img_heigh = img_heigh;
@@ -121,6 +123,17 @@ BodyModel::BodyModel(
 
     _shoulder_heigh = shoulder_heigh;
     _shoulder_heigh_min = _img_heigh / 120, _shoulder_heigh_max = _head_radius < _neck_heigh ? _head_radius : _neck_heigh;
+    
+    _elbow_width = elbow_width;
+    _elbow_width_min = 40, _elbow_width_max = 100;
+    
+    _left_elbow_angle = left_elbow_angle;
+    _left_elbow_angle_min = _left_arm_angle - 20 < _arm_angle_min ? _arm_angle_min : _left_arm_angle - 20;
+    _left_elbow_angle_max = _left_arm_angle + 20 < _arm_angle_max ? _left_arm_angle + 20 : _arm_angle_max;
+
+    _right_elbow_angle = right_arm_angle;
+    _right_elbow_angle_min = _right_arm_angle - 20 < _arm_angle_min ? _arm_angle_min : _right_arm_angle - 20;
+    _right_elbow_angle_max = _right_arm_angle + 20 < _arm_angle_max ? _right_arm_angle + 20 : _arm_angle_max;
 
     _heigh = _head_radius + _neck_heigh + _chest_heigh + _waist_heigh + _leg_length;
     _heigh_min = _img_heigh / 2, _heigh_max = _img_heigh;
@@ -146,9 +159,22 @@ BodyModel::BodyModel(
     _right_arm_center = Point(right_arm_center_x, right_arm_center_y);
 
     _right_arm_lower = Point(_right_shoulder.x - _arm_width * sin_right_arm_angle, _right_shoulder.y + _arm_width * cos_right_arm_angle);
-
-    double right_hand_center_x = _right_arm_center.x + _arm_length * cos_right_arm_angle;
-    double right_hand_center_y = _right_arm_center.y + _arm_length * sin_right_arm_angle;
+    double cos_left_elbow_angle = cos(_left_elbow_angle / 180 * PI);
+    double sin_left_elbow_angle = sin(_left_elbow_angle / 180 * PI);
+    double cos_right_elbow_angle = cos(_right_elbow_angle / 180 * PI);
+    double sin_right_elbow_angle = sin(_right_elbow_angle / 180 * PI);
+    
+    double right_elbow_center_x = _right_arm_center.x + _arm_length * cos_right_arm_angle / 2;
+    double right_elbow_center_y = _right_arm_center.y + _arm_length * sin_right_arm_angle / 2;
+    
+    _right_elbow_center = Point(right_elbow_center_x, right_elbow_center_y);
+    
+    _right_elbow_upper = Point(_right_elbow_center.x + _elbow_width * sin_right_elbow_angle / 2, _right_elbow_center.y - _elbow_width * cos_right_elbow_angle / 2);
+    
+    _right_elbow_lower = Point(_right_elbow_center.x - _elbow_width * sin_right_elbow_angle / 2, _right_elbow_center.y + _elbow_width * cos_right_elbow_angle / 2);
+    
+    double right_hand_center_x = _right_elbow_center.x + _arm_length * cos_right_elbow_angle / 2;
+    double right_hand_center_y = _right_elbow_center.y + _arm_length * sin_right_elbow_angle / 2;
     _right_hand_center = Point(right_hand_center_x, right_hand_center_y);
 
     _right_hand_upper = Point(_right_hand_center.x + _hand_width * sin_right_arm_angle / 2, _right_hand_center.y - _hand_width * cos_right_arm_angle / 2);
@@ -160,9 +186,19 @@ BodyModel::BodyModel(
     _left_arm_center = Point(left_arm_center_x, left_arm_center_y);
 
     _left_arm_lower = Point(_left_shoulder.x + _arm_width * sin_left_arm_angle, _left_shoulder.y + _arm_width * cos_left_arm_angle);
+    
+    double left_elbow_center_x = _left_arm_center.x - _arm_length * cos_left_arm_angle / 2;
+    double left_elbow_center_y = _left_arm_center.y + _arm_length * sin_left_arm_angle / 2;
+    
+    _left_elbow_center = Point(left_elbow_center_x, left_elbow_center_y);
+    
+    _left_elbow_upper = Point(_left_elbow_center.x - _elbow_width * sin_left_elbow_angle / 2, _left_elbow_center.y - _elbow_width * cos_left_elbow_angle / 2);
+    
+    _left_elbow_lower = Point(_left_elbow_center.x + _elbow_width * sin_left_elbow_angle / 2, _left_elbow_center.y + _elbow_width * cos_left_elbow_angle / 2);
 
-    double left_hand_center_x = _left_arm_center.x - _arm_length * cos_left_arm_angle;
-    double left_hand_center_y = _left_arm_center.y + _arm_length * sin_left_arm_angle;
+    double left_hand_center_x = _left_elbow_center.x - _arm_length * cos_left_elbow_angle / 2;
+    double left_hand_center_y = _left_elbow_center.y + _arm_length * sin_left_elbow_angle / 2;
+    
     _left_hand_center = Point(left_hand_center_x, left_hand_center_y);
 
     _left_hand_upper = Point(_left_hand_center.x - _hand_width * sin_left_arm_angle / 2, _left_hand_center.y - _hand_width * cos_left_arm_angle / 2);
@@ -269,6 +305,9 @@ bool BodyModel::withinRange()
         && withinRange(_center_x, _left_heel.x, _right_heel.x)
         && withinRange(_left_foot_heigh, _foot_heigh_min, _foot_heigh_max)
         && withinRange(_right_foot_heigh, _foot_heigh_min, _foot_heigh_max)
+    && withinRange(_elbow_width, _elbow_width_min, _elbow_width_max)
+    && withinRange(_left_elbow_angle, _left_elbow_angle_min, _left_elbow_angle_max)
+    && withinRange(_right_elbow_angle, _right_elbow_angle_min, _right_elbow_angle_max)
 
         && withinImage(_right_shoulder)
         && withinImage(_left_shoulder)
@@ -322,9 +361,13 @@ Mat BodyModel::generateMat()
         Point(_center_x + _neck_width, _center_y),
         Point(_center_x - _neck_width, _center_y));
     // draw left arm
-    drawPolygon(_left_shoulder, _left_arm_lower, _left_hand_upper, _left_hand_lower);
+    drawPolygon(_left_shoulder, _left_arm_lower, _left_elbow_upper, _left_elbow_lower);
+    // draw left hand
+    drawPolygon(_left_elbow_upper, _left_elbow_lower, _left_hand_upper, _left_hand_lower);
     // draw right arm
-    drawPolygon(_right_shoulder, _right_arm_lower, _right_hand_upper, _right_hand_lower);
+    drawPolygon(_right_shoulder, _right_arm_lower, _right_elbow_upper, _right_elbow_lower);
+    // draw right hand
+    drawPolygon(_right_elbow_upper, _right_elbow_lower, _right_hand_upper, _right_hand_lower);
     // draw head
     drwaCircle(_head_center, _head_radius);
     // draw left leg
@@ -397,5 +440,8 @@ void BodyModel::printOut()
          << _left_knee_angle << " "
          << _right_knee_angle << " "
          << _knee_width << " "
-         << _shoulder_heigh << endl;
+         << _shoulder_heigh << " "
+        << _elbow_width << " "
+        << _left_elbow_angle << " "
+        << _right_elbow_angle << " " << endl;
 }
