@@ -24,7 +24,7 @@ using namespace cv;
 using namespace std;
 
 #define PI 3.14159
-#define NUM_BODY_INPUT_POINTS 17
+#define NUM_BODY_INPUT_POINTS 21
 
 class BodyModel {
 public:
@@ -59,8 +59,8 @@ public:
     int _leg_length;
     int _leg_length_min ,_leg_length_max;
     
-    int _foot_width;
-    int _foot_width_min, _foot_width_max;
+    int _leg_width;
+    int _leg_width_min, _leg_width_max;
     
     int _waist_width;
     int _waist_width_min, _waist_width_max;
@@ -76,18 +76,71 @@ public:
     int _img_width;
     int _img_heigh;
     
-    double _leg_angle;
-    double _leg_angle_min, _leg_angle_max;
+    double _left_leg_angle;
+    double _left_leg_angle_min, _left_leg_angle_max;
     
-    double _arm_angle;
-    double _arm_angle_min, _arm_angle_max;
+    double _right_leg_angle;
+    double _right_leg_angle_min, _right_leg_angle_max;
     
+    double _left_arm_angle;
+    double _left_arm_angle_min, _left_arm_angle_max;
+    
+    double _right_arm_angle;
+    double _right_arm_angle_min, _right_arm_angle_max;
+    
+    int _foot_width;
+    int _foot_width_min, _foot_width_max;
+    
+    int _foot_heigh;
+    int _foot_heigh_min, _foot_heigh_max;
+    
+    //derived
     int _heigh;
     int _heigh_min, _heigh_max;
     
+    Point _right_shoulder;
+    Point _left_shoulder;
+    
+    Point _right_waist;
+    Point _left_waist;
+    
+    Point _right_hip;
+    Point _left_hip;
+    Point _mid_hip;
+    
+    Point _right_heel;
+    Point _left_heel;
+    
+    Point _right_footrope;
+    Point _left_footrope;
+    
+    Point _right_toe;
+    Point _left_toe;
+    
+    Point _right_heel_upper;
+    Point _left_heel_upper;
+    
+    Point _right_arm_center;
+    Point _left_arm_center;
+    
+    Point _right_arm_lower;
+    Point _left_arm_lower;
+    
+    Point _right_hand_center;
+    Point _left_hand_center;
+    
+    Point _right_hand_upper;
+    Point _left_hand_upper;
+    
+    Point _right_hand_lower;
+    Point _left_hand_lower;
+    
+    Point _head_upper;
+    Point _head_center;
+    
     Mat _mask;
     BodyModel();
-    BodyModel(int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, double, double);
+    BodyModel(int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, double, double, double, double, int, int);
     Mat generateMat();
     bool validate();
     BodyModel* generateNextValidBodyModel();
@@ -102,7 +155,11 @@ private:
     void generateHead();
     void generateLeftLeg();
     void generateRightLeg();
+    void generateLeftFoot();
+    void generateRightFoot();
+
     bool withinRange();
+    bool withinRange(Point);
     bool withinRange(double value, double value_min, double value_max);
     bool withinRange(int value, int value_min, int value_max);
     bool withinImage(int, bool) ;

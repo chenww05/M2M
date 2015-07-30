@@ -29,15 +29,19 @@ BodyModel* generateModel(BodyModel* original, int index, int step)
     int arm_width = original->_arm_width;
     int hand_width = original->_hand_width;
     int leg_length = original->_leg_length;
-    int foot_width = original->_foot_width;
+    int leg_width = original->_leg_width;
     int waist_width = original->_waist_width;
     int waist_heigh = original->_waist_heigh;
     int center_x = original->_center_x;
     int center_y = original->_center_y;
     int img_width = original->_img_width;
     int img_heigh = original->_img_heigh;
-    double leg_angle = original->_leg_angle;
-    double arm_angle = original->_arm_angle;
+    double left_leg_angle = original->_left_leg_angle;
+    double right_leg_angle = original->_right_leg_angle;
+    double left_arm_angle = original->_left_arm_angle;
+    double right_arm_angle = original->_right_arm_angle;
+    int foot_width = original->_foot_width;
+    int foot_heigh = original->_foot_heigh;
     CV_Assert(index < NUM_BODY_INPUT_POINTS && index >= 0);
     switch (index) {
     case 0:
@@ -71,7 +75,7 @@ BodyModel* generateModel(BodyModel* original, int index, int step)
         leg_length += step;
         break;
     case 10:
-        foot_width += step;
+        leg_width += step;
         break;
     case 11:
         waist_width += step;
@@ -86,10 +90,22 @@ BodyModel* generateModel(BodyModel* original, int index, int step)
         center_y += step;
         break;
     case 15:
-        leg_angle += step;
+        left_leg_angle += step;
         break;
     case 16:
-        arm_angle += step;
+        right_leg_angle += step;
+        break;
+    case 17:
+        left_arm_angle += step;
+        break;
+    case 18:
+        right_arm_angle += step;
+        break;
+    case 19:
+        foot_width += step;
+        break;
+    case 20:
+        foot_heigh += step;
         break;
     default:
         break;
@@ -97,18 +113,18 @@ BodyModel* generateModel(BodyModel* original, int index, int step)
 
     BodyModel* model = new BodyModel(hip_width, shoulder_width, chest_heigh, head_radius,
         neck_heigh, neck_width, arm_length, arm_width, hand_width,
-        leg_length, foot_width, waist_width, waist_heigh, center_x,
-        center_y, img_width, img_heigh, leg_angle, arm_angle);
+        leg_length, leg_width, waist_width, waist_heigh, center_x,
+        center_y, img_width, img_heigh, left_leg_angle, right_leg_angle, left_arm_angle, right_arm_angle, foot_width, foot_heigh);
     return model;
 }
 
-BodyModel* findBestModel(BodyModel* model, int index, Mat* src)
+BodyModel* findBestModel(BodyModel* model, int index, Mat* src, bool& hasUpdate)
 {
     int iteration = 0;
     const int max_iteration = 200;
     int last_similar = 0;
     int max_last_similar = 20;
-    int max_step = 10;
+    int max_step = 15;
     Mat mask = model->generateMat();
     double distance = getAvgDistance(&mask, src);
     const double eps = 0.001;
@@ -155,6 +171,7 @@ BodyModel* findBestModel(BodyModel* model, int index, Mat* src)
                 }
             }
             last_similar = 0;
+            hasUpdate = true;
         }
         else if (isLeftLarger) {
             distance = left_distance;
@@ -164,6 +181,7 @@ BodyModel* findBestModel(BodyModel* model, int index, Mat* src)
                 delete right_model;
             }
             last_similar = 0;
+            hasUpdate = true;
         }
         else if (isRightLarger) {
             distance = right_distance;
@@ -173,6 +191,7 @@ BodyModel* findBestModel(BodyModel* model, int index, Mat* src)
                 delete left_model;
             }
             last_similar = 0;
+            hasUpdate = true;
         }
         else {
             // good it is the larger one. no update.
@@ -207,45 +226,85 @@ void execute(Mat* src)
     int arm_width = 100;
     int hand_width = 50;
     int leg_length = 600;
-    int foot_width = 80;
+    int leg_width = 40;
     int waist_width = 120;
     int waist_heigh = 150;
-    double leg_angle = 85;
-    double arm_angle = 60;
+    double left_leg_angle = 85;
+    double right_leg_angle = 85;
+    double left_arm_angle = 60;
+    double right_arm_angle = 60;
+    int foot_width = 80;
+    int foot_heigh = 120;
     int center_x = 515;
     int center_y = 280;
     BodyModel* model = new BodyModel(hip_width, shoulder_width, chest_heigh, head_radius,
         neck_heigh, neck_width, arm_length, arm_width, hand_width,
-        leg_length, foot_width, waist_width, waist_heigh, center_x,
-        center_y, width, heigh, leg_angle, arm_angle);
+        leg_length, leg_width, waist_width, waist_heigh, center_x,
+        center_y, width, heigh, left_leg_angle, right_leg_angle, left_arm_angle, right_arm_angle, foot_width, foot_heigh);
 
     CV_Assert(model->validate());
     srand((uchar)time(NULL));
     int index = 0;
     int iteration = 0;
-    int max_iteration = 100;
-    while (iteration < max_iteration) {
+    int max_iteration = 200;
+    int last_update = 0;
+    int max_update = 20;
+    while (iteration < max_iteration && last_update < max_update) {
         int current_index = rand() % NUM_BODY_INPUT_POINTS;
         if (index == current_index) {
             continue;
         }
         index = current_index;
-        model = findBestModel(model, index, src);
+        bool hasUpdate = false;
+        model = findBestModel(model, index, src, hasUpdate);
+        if (hasUpdate) {
+            last_update = 0;
+        }
+        else {
+            last_update++;
+        }
         iteration++;
+        if (iteration % 10 == 0) {
+            //showImg(model, src);
+        }
     }
-    Mat mask = model->generateMat();
-    Mat edge, draw;
-    Canny(mask, edge, 50, 150, 3);
+    showImg(model, src);
+    waitKey(0);
 
+    //    Mat mask = model->generateMat();
+    //    Mat edge, draw;
+    //    Canny(mask, edge, 50, 150, 3);
+    //    edge.convertTo(draw, CV_8U);
+    //    for (int i = 0; i < src->rows; ++i) {
+    //        for (int j = 0; j < src->cols; ++j) {
+    //            if (edge.at<uchar>(i, j) == 255) {
+    //                src->at<uchar>(i, j * 3) = 255;
+    //            }
+    //        }
+    //    }
+
+    //    imwrite("src.jpg", *src);
+}
+
+void showImg(BodyModel* model, Mat* src)
+{
+    Mat edge, draw;
+    Mat dest;
+    src->copyTo(dest);
+    Mat mask = model->generateMat();
+    Canny(mask, edge, 50, 150, 3);
     edge.convertTo(draw, CV_8U);
 
     for (int i = 0; i < src->rows; ++i) {
         for (int j = 0; j < src->cols; ++j) {
             if (edge.at<uchar>(i, j) == 255) {
-                src->at<uchar>(i, j * 3) = 255;
+                dest.at<uchar>(i, j * 3) = 255;
             }
         }
     }
 
-    imwrite("src.jpg", *src);
+    imwrite("dest.jpg", dest);
+    imshow("Edge Map", dest);
+    waitKey(0);
+    cout << "Updated " << endl;
 }

@@ -32,7 +32,7 @@ int main(int argc, char** argv)
 {
     //    PreProcessing( argc, argv) ;
     //    return 0;
-    src = imread(argv[1]);
+    src = imread("diffImg.jpg");
     execute(&src);
     return 0;
 }

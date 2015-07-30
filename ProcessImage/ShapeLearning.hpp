@@ -27,7 +27,8 @@ using namespace std;
 void execute(Mat* src) ;
 pair<BodyModel*, BodyModel*> generateLeftRightModel(BodyModel* original, int index, int step);
 BodyModel* generateModel(BodyModel* original, int index, int step) ;
-BodyModel* findBestModel(BodyModel* model, int index, Mat* src);
+BodyModel* findBestModel(BodyModel* model, int index, Mat* src, bool& hasUpdate);
+void showImg(BodyModel* model, Mat* src) ;
 
 
 #endif /* ShapeLearning_hpp */

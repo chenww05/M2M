@@ -23,15 +23,19 @@ BodyModel::BodyModel(
     int arm_width,
     int hand_width,
     int leg_length,
-    int foot_width,
+    int leg_width,
     int waist_width,
     int waist_heigh,
     int center_x,
     int center_y,
     int img_width,
     int img_heigh,
-    double leg_angle,
-    double arm_angle)
+    double left_leg_angle,
+    double right_leg_angle,
+    double left_arm_angle,
+    double right_arm_angle,
+    int foot_width,
+    int foot_heigh)
 {
     _img_width = img_width;
     _img_heigh = img_heigh;
@@ -72,8 +76,8 @@ BodyModel::BodyModel(
     _leg_length = leg_length;
     _leg_length_min = _img_heigh / 10, _leg_length_max = _img_heigh / 2;
 
-    _foot_width = foot_width;
-    _foot_width_min = _img_width / 30, _foot_width_max = _img_width / 4;
+    _leg_width = leg_width;
+    _leg_width_min = _img_width / 30, _leg_width_max = _img_width / 4;
 
     _waist_width = waist_width;
     _waist_width_min = _img_width / 10, _waist_width_max = _img_width / 2;
@@ -81,14 +85,96 @@ BodyModel::BodyModel(
     _waist_heigh = waist_heigh;
     _waist_heigh_min = _img_heigh / 10, _waist_heigh_max = _img_heigh / 2;
 
-    _leg_angle = leg_angle;
-    _leg_angle_min = 60.0, _leg_angle_max = 89.0;
+    _left_leg_angle = left_leg_angle;
+    _left_leg_angle_min = 60.0, _left_leg_angle_max = 89.0;
 
-    _arm_angle = arm_angle;
-    _arm_angle_min = 40.0, _arm_angle_max = 80.0;
+    _right_leg_angle = right_leg_angle;
+    _right_leg_angle_min = 60.0, _right_leg_angle_max = 89.0;
+
+    _left_arm_angle = left_arm_angle;
+    _left_arm_angle_min = 45.0, _left_arm_angle_max = 70.0;
+
+    _right_arm_angle = right_arm_angle;
+    _right_arm_angle_min = 45.0, _right_arm_angle_max = 70.0;
+
+    _foot_heigh = foot_heigh;
+    _foot_heigh_min = _img_heigh / 30, _foot_heigh_max = _img_heigh / 8;
+
+    _foot_width = foot_width;
+    _foot_width_min = _img_width / 30, _foot_width_max = _img_width / 8;
 
     _heigh = _head_radius + _neck_heigh + _chest_heigh + _waist_heigh + _leg_length;
     _heigh_min = _img_heigh / 2, _heigh_max = _img_heigh;
+
+    //derived
+    _right_shoulder = Point(_center_x + _shoulder_width, _center_y);
+    _left_shoulder = Point(_center_x - _shoulder_width, _center_y);
+
+    _right_waist = Point(_center_x + _waist_width, _center_y + _chest_heigh);
+    _left_waist = Point(_center_x - _waist_width, _center_y + _chest_heigh);
+
+    _right_hip = Point(_center_x + _hip_width, _center_y + _chest_heigh + _waist_heigh);
+    _left_hip = Point(_center_x - _hip_width, _center_y + _chest_heigh + _waist_heigh);
+    _mid_hip = Point(_center_x, _center_y + _chest_heigh + _waist_heigh);
+
+    double cos_left_arm_angle = cos(_left_arm_angle / 180 * PI);
+    double sin_left_arm_angle = sin(_left_arm_angle / 180 * PI);
+    double cos_right_arm_angle = cos(_right_arm_angle / 180 * PI);
+    double sin_right_arm_angle = sin(_right_arm_angle / 180 * PI);
+
+    double right_arm_center_x = _right_shoulder.x - _arm_width * sin_right_arm_angle / 2;
+    double right_arm_center_y = _right_shoulder.y + _arm_width * cos_right_arm_angle / 2;
+    _right_arm_center = Point(right_arm_center_x, right_arm_center_y);
+
+    _right_arm_lower = Point(_right_shoulder.x - _arm_width * sin_right_arm_angle, _right_shoulder.y + _arm_width * cos_right_arm_angle);
+
+    double right_hand_center_x = _right_arm_center.x + _arm_length * cos_right_arm_angle;
+    double right_hand_center_y = _right_arm_center.y + _arm_length * sin_right_arm_angle;
+    _right_hand_center = Point(right_hand_center_x, right_hand_center_y);
+
+    _right_hand_upper = Point(_right_hand_center.x + _hand_width * sin_right_arm_angle / 2, _right_hand_center.y - _hand_width * cos_right_arm_angle / 2);
+
+    _right_hand_lower = Point(_right_hand_center.x - _hand_width * sin_right_arm_angle / 2, _right_hand_center.y + _hand_width * cos_right_arm_angle / 2);
+
+    double left_arm_center_x = _left_shoulder.x + _arm_width * sin_left_arm_angle / 2;
+    double left_arm_center_y = _left_shoulder.y + _arm_width * cos_left_arm_angle / 2;
+    _left_arm_center = Point(left_arm_center_x, left_arm_center_y);
+
+    _left_arm_lower = Point(_left_shoulder.x + _arm_width * sin_left_arm_angle, _left_shoulder.y + _arm_width * cos_left_arm_angle);
+
+    double left_hand_center_x = _left_arm_center.x - _arm_length * cos_left_arm_angle;
+    double left_hand_center_y = _left_arm_center.y + _arm_length * sin_left_arm_angle;
+    _left_hand_center = Point(left_hand_center_x, left_hand_center_y);
+
+    _left_hand_upper = Point(_left_hand_center.x - _hand_width * sin_left_arm_angle / 2, _left_hand_center.y - _hand_width * cos_left_arm_angle / 2);
+
+    _left_hand_lower = Point(_left_hand_center.x + _hand_width * sin_left_arm_angle / 2, _left_hand_center.y + _hand_width * cos_left_arm_angle / 2);
+
+    //Derive Legs
+    double cos_left_leg_angle = cos(_left_leg_angle / 180 * PI);
+    double sin_left_leg_angle = sin(_left_leg_angle / 180 * PI);
+    double cos_right_leg_angle = cos(_right_leg_angle / 180 * PI);
+    double sin_right_leg_angle = sin(_right_leg_angle / 180 * PI);
+
+    _right_footrope = Point(_right_hip.x + _leg_length * cos_right_leg_angle,
+        _right_hip.y + _leg_length * sin_right_leg_angle);
+    _right_heel = Point(_right_footrope.x - _leg_width, _right_footrope.y);
+
+    _left_footrope = Point(_left_hip.x - _leg_length * cos_left_leg_angle,
+        _left_hip.y + _leg_length * sin_left_leg_angle);
+    _left_heel = Point(_left_footrope.x + _leg_width, _left_footrope.y);
+
+    //Derive feet
+    _right_toe = Point(_right_heel.x + _foot_width, _right_heel.y);
+    _right_heel_upper = Point(_right_heel.x, _right_heel.y - _foot_heigh);
+
+    _left_toe = Point(_left_heel.x - _foot_width, _left_heel.y);
+    _left_heel_upper = Point(_left_heel.x, _left_heel.y - _foot_heigh);
+}
+
+bool BodyModel::withinRange(Point point)
+{
+    return withinImage(point.x, true) && withinImage(point.y, false);
 }
 
 bool BodyModel::withinRange(int value, int value_min, int value_max)
@@ -111,16 +197,19 @@ bool BodyModel::withinImage(int value, bool horizontal)
 }
 bool BodyModel::withinRange()
 {
-    double cos_leg_angle = cos(_leg_angle / 180 * PI);
-    double sin_leg_angle = sin(_leg_angle / 180 * PI);
-    double cos_arm_angle = cos(_arm_angle / 180 * PI);
-    double sin_arm_angle = sin(_arm_angle / 180 * PI);
-    double right_arm_center_x = _center_x + _shoulder_width - _arm_width * sin_arm_angle / 2;
-    double right_arm_center_y = _center_y + _arm_width * cos_arm_angle / 2;
-    double right_hand_center_x = right_arm_center_x + _arm_length * cos_arm_angle;
-    double right_hand_center_y = right_arm_center_y + _arm_length * sin_arm_angle;
-    double left_arm_center_x = _center_x - _shoulder_width + _arm_width * sin_arm_angle / 2;
-    double left_hand_center_x = left_arm_center_x - _arm_length * cos_arm_angle;
+    double cos_left_arm_angle = cos(_left_arm_angle / 180 * PI);
+    double sin_left_arm_angle = sin(_left_arm_angle / 180 * PI);
+    double cos_right_leg_angle = cos(_right_leg_angle / 180 * PI);
+    double sin_right_leg_angle = sin(_right_leg_angle / 180 * PI);
+    double cos_right_arm_angle = cos(_right_arm_angle / 180 * PI);
+    double sin_right_arm_angle = sin(_right_arm_angle / 180 * PI);
+    double right_arm_center_x = _right_shoulder.x - _arm_width * sin_right_arm_angle / 2;
+    double right_arm_center_y = _center_y + _arm_width * cos_right_arm_angle / 2;
+    double right_hand_center_x = right_arm_center_x + _arm_length * cos_right_arm_angle;
+    double right_hand_center_y = right_arm_center_y + _arm_length * sin_right_arm_angle;
+
+    double left_arm_center_x = _left_shoulder.x + _arm_width * sin_left_arm_angle / 2;
+    double left_hand_center_x = left_arm_center_x - _arm_length * cos_left_arm_angle;
 
     return withinRange(_center_x, _center_x_min, _center_x_max)
         && withinRange(_center_y, _center_y_min, _center_y_max)
@@ -134,168 +223,42 @@ bool BodyModel::withinRange()
         && withinRange(_arm_width, _arm_width_min, _arm_width_max)
         && withinRange(_hand_width, _hand_width_min, _hand_width_max)
         && withinRange(_leg_length, _leg_length_min, _leg_length_max)
-        && withinRange(_foot_width, _foot_width_min, _foot_width_max)
+        && withinRange(_leg_width, _leg_width_min, _leg_width_max)
         && withinRange(_waist_width, _waist_width_min, _waist_width_max)
         && withinRange(_waist_heigh, _waist_heigh_min, _waist_heigh_max)
-        && withinRange(_leg_angle, _leg_angle_min, _leg_angle_max)
-        && withinRange(_arm_angle, _arm_angle_min, _arm_angle_max)
+        && withinRange(_left_leg_angle, _left_leg_angle_min, _left_leg_angle_max)
+        && withinRange(_right_leg_angle, _right_leg_angle_min, _right_leg_angle_max)
+        && withinRange(_left_arm_angle, _left_arm_angle_min, _left_arm_angle_max)
+        && withinRange(_right_arm_angle, _right_arm_angle_min, _right_arm_angle_max)
         && withinRange(_heigh, _heigh_min, _heigh_max)
+        && withinRange(_foot_width, _foot_width_min, _foot_width_max)
+        && withinRange(_leg_width * 3 / 2, 0, _foot_width)
+        && withinRange(_foot_heigh, _foot_heigh_min, _foot_heigh_max)
         && withinImage(_center_x + _waist_width, true)
         && withinImage(_center_y + _chest_heigh, false)
         && withinImage(_center_x - _waist_width, true)
         && withinImage(_center_x + _hip_width, true)
         && withinImage(_center_x - _hip_width, true)
         && withinImage(_center_y + _chest_heigh + _waist_heigh, false)
-        && withinImage(_center_x + _shoulder_width, true)
-        && withinImage(_center_x - _shoulder_width, true)
+        && withinImage(_right_shoulder.x, true)
+        && withinImage(_left_shoulder.x, true)
         && withinImage(_center_y + _chest_heigh + _waist_heigh, false)
-        && withinImage(_center_x + _hip_width + _leg_length * cos_leg_angle, true)
-        && withinImage(_center_x + _hip_width + _leg_length * cos_leg_angle - _foot_width, true)
-        && withinImage(_center_y + _chest_heigh + _waist_heigh + _leg_length * sin_leg_angle, false)
-        && withinImage(_center_x - _hip_width - _leg_length * cos_leg_angle, true)
-        && withinImage(_center_x - _hip_width - _leg_length * cos_leg_angle + _foot_width, true)
+        && withinImage(_center_x + _hip_width + _leg_length * cos_right_leg_angle, true)
+        && withinImage(_center_x + _hip_width + _leg_length * cos_right_leg_angle - _leg_width, true)
+        && withinImage(_center_y + _chest_heigh + _waist_heigh + _leg_length * sin_right_leg_angle, false)
+        && withinImage(_center_x - _hip_width - _leg_length * cos_right_leg_angle, true)
+        && withinImage(_center_x - _hip_width - _leg_length * cos_right_leg_angle + _leg_width, true)
         && withinImage(_center_y - _neck_heigh - _head_radius, false)
-        && withinImage(_center_x + _shoulder_width - _arm_width * sin_arm_angle, true)
-        && withinImage(_center_y + _arm_width * cos_arm_angle, false)
-        && withinImage(right_hand_center_x + _hand_width * sin_arm_angle / 2, true)
-        && withinImage(right_hand_center_y - _hand_width * cos_arm_angle / 2, false)
-        && withinImage(_center_x - _shoulder_width + _arm_width * sin_arm_angle, true)
-        && withinImage(left_hand_center_x - _hand_width * sin_arm_angle / 2, true);
+        && withinImage(_right_shoulder.x - _arm_width * sin_right_arm_angle, true)
+        && withinImage(_center_y + _arm_width * cos_right_arm_angle, false)
+        && withinImage(right_hand_center_x + _hand_width * sin_right_arm_angle / 2, true)
+        && withinImage(right_hand_center_y - _hand_width * cos_right_arm_angle / 2, false)
+        && withinImage(_left_shoulder.x + _arm_width * sin_right_arm_angle, true)
+        && withinImage(left_hand_center_x - _hand_width * sin_right_arm_angle / 2, true)
+        && withinImage(_center_x - _hip_width - _leg_length * cos_right_leg_angle + _leg_width - _foot_width, true)
+        && withinImage(_center_x + _hip_width + _leg_length * cos_right_leg_angle - _leg_width + _foot_width, true);
 }
 
-BodyModel* BodyModel::generateNextValidBodyModel()
-{
-    int hip_width = _hip_width;
-    int shoulder_width = _shoulder_width;
-    int chest_heigh = _chest_heigh;
-    int head_radius = _head_radius;
-    int neck_heigh = _neck_heigh;
-    int neck_width = _neck_width;
-    int arm_length = _arm_length;
-    int arm_width = _arm_width;
-    int hand_width = _hand_width;
-    int leg_length = _leg_length;
-    int foot_width = _foot_width;
-    int waist_width = _waist_width;
-    int waist_heigh = _waist_heigh;
-    int center_x = _center_x;
-    int center_y = _center_y;
-    int img_width = _img_width;
-    int img_heigh = _img_heigh;
-    double leg_angle = _leg_angle;
-    double arm_angle = _arm_angle;
-    srand((uchar)time(NULL));
-    int index;
-    int iteration = 0;
-    int range;
-
-    int max_iteration = 1000;
-    int step = 5;
-    while (iteration < max_iteration) {
-        index = rand() % NUM_BODY_INPUT_POINTS;
-        switch (index) {
-        case 0:
-            range = (_hip_width_max - _hip_width_min) / step; // 左range 右range
-            hip_width += rand() % (range * 2) - range;
-            break;
-        case 1:
-            range = (_shoulder_width_max - _shoulder_width_min) / step;
-            shoulder_width += rand() % (range * 2) - range;
-            break;
-        case 2:
-            range = (_chest_heigh_max - _chest_heigh_min) / step;
-            chest_heigh += rand() % (range * 2) - range;
-            break;
-        case 3:
-            range = (_head_radius_max - _head_radius_min) / step;
-            head_radius += rand() % (range * 2) - range;
-            break;
-        case 4:
-            range = (_neck_heigh_max - _neck_heigh_min) / step;
-            neck_heigh += rand() % (range * 2) - range;
-            break;
-        case 5:
-            range = (_neck_width_max - _neck_width_min) / step;
-            neck_width += rand() % (range * 2) - range;
-            break;
-        case 6:
-            range = (_arm_length_max - _arm_length_min) / step;
-            arm_length += rand() % (range * 2) - range;
-            break;
-        case 7:
-            range = (_arm_width_max - _arm_width_min) / step;
-            arm_width += rand() % (range * 2) - range;
-            break;
-        case 8:
-            range = (_hand_width_max - _hand_width_min) / step;
-            hand_width += rand() % (range * 2) - range;
-            break;
-        case 9:
-            range = (_leg_length_max - _leg_length_min) / step;
-            leg_length += rand() % (range * 2) - range;
-            break;
-        case 10:
-            range = (_foot_width_max - _foot_width_min) / step;
-            foot_width += rand() % (range * 2) - range;
-            break;
-        case 11:
-            range = (_waist_width_max - _waist_width_min) / step;
-            waist_width += rand() % (range * 2) - range;
-            break;
-        case 12:
-            range = (_waist_heigh_max - _waist_heigh_min) / step;
-            waist_heigh += rand() % (range * 2) - range;
-            break;
-        case 13:
-            range = (_center_x_max - _center_x_min) / step;
-            center_x += rand() % (range * 2) - range;
-            break;
-        case 14:
-            range = (_center_y_max - _center_y_min) / step;
-            center_y += rand() % (range * 2) - range;
-            break;
-        case 15:
-            range = (_leg_angle_max - _leg_angle_min) / step;
-            leg_angle += rand() % (range * 2) - range;
-            break;
-        case 16:
-            range = (_arm_angle_max - _arm_angle_min) / step;
-            arm_angle += rand() % (range * 2) - range;
-            break;
-        default:
-            break;
-        }
-        BodyModel* new_model = new BodyModel(hip_width,
-            shoulder_width,
-            chest_heigh,
-            head_radius,
-            neck_heigh,
-            neck_width,
-            arm_length,
-            arm_width,
-            hand_width,
-            leg_length,
-            foot_width,
-            waist_width,
-            waist_heigh,
-            center_x,
-            center_y,
-            img_width,
-            img_heigh,
-            leg_angle,
-            arm_angle);
-        if (new_model->validate()) {
-            //            cout << index << endl;
-            //            cout << range << endl;
-            return new_model;
-        }
-        else {
-            delete new_model;
-        }
-        iteration++;
-    }
-    return NULL;
-}
 
 bool BodyModel::validate()
 {
@@ -330,9 +293,11 @@ Mat BodyModel::generateMat()
     generateHead();
     generateLeftLeg();
     generateRightLeg();
+    generateLeftFoot();
+    generateRightFoot();
     return _mask;
 }
-//need a validate
+
 void BodyModel::generateNeck()
 {
     Point rook_points[1][4];
@@ -347,18 +312,10 @@ void BodyModel::generateNeck()
 void BodyModel::generateLeftArm()
 {
     Point rook_points[1][4];
-    rook_points[0][0] = Point(_center_x - _shoulder_width, _center_y); //done
-    double cos_angle = cos(_arm_angle / 180 * PI);
-    double sin_angle = sin(_arm_angle / 180 * PI);
-
-    rook_points[0][3] = Point(_center_x - _shoulder_width + _arm_width * sin_angle, _center_y + _arm_width * cos_angle);
-
-    double arm_center_x = _center_x - _shoulder_width + _arm_width * sin_angle / 2;
-    double arm_center_y = _center_y + _arm_width * cos_angle / 2;
-    double hand_center_x = arm_center_x - _arm_length * cos_angle;
-    double hand_center_y = arm_center_y + _arm_length * sin_angle;
-    rook_points[0][1] = Point(hand_center_x - _hand_width * sin_angle / 2, hand_center_y - _hand_width * cos_angle / 2);
-    rook_points[0][2] = Point(hand_center_x + _hand_width * sin_angle / 2, hand_center_y + _hand_width * cos_angle / 2);
+    rook_points[0][0] = _left_shoulder;
+    rook_points[0][3] = _left_arm_lower;
+    rook_points[0][1] = _left_hand_upper;
+    rook_points[0][2] = _left_hand_lower;
     const Point* ppt[1] = { rook_points[0] };
     int npt[] = { 4 };
     fillPoly(_mask, ppt, npt, 1, Scalar(255, 255, 255), 8);
@@ -366,18 +323,10 @@ void BodyModel::generateLeftArm()
 void BodyModel::generateRightArm()
 {
     Point rook_points[1][4];
-    rook_points[0][0] = Point(_center_x + _shoulder_width, _center_y); //done
-    double cos_angle = cos(_arm_angle / 180 * PI);
-    double sin_angle = sin(_arm_angle / 180 * PI);
-
-    rook_points[0][3] = Point(_center_x + _shoulder_width - _arm_width * sin_angle, _center_y + _arm_width * cos_angle);
-
-    double arm_center_x = _center_x + _shoulder_width - _arm_width * sin_angle / 2;
-    double arm_center_y = _center_y + _arm_width * cos_angle / 2;
-    double hand_center_x = arm_center_x + _arm_length * cos_angle;
-    double hand_center_y = arm_center_y + _arm_length * sin_angle;
-    rook_points[0][1] = Point(hand_center_x + _hand_width * sin_angle / 2, hand_center_y - _hand_width * cos_angle / 2);
-    rook_points[0][2] = Point(hand_center_x - _hand_width * sin_angle / 2, hand_center_y + _hand_width * cos_angle / 2);
+    rook_points[0][0] = _right_shoulder;
+    rook_points[0][3] = _right_arm_lower;
+    rook_points[0][1] = _right_hand_upper;
+    rook_points[0][2] = _right_hand_lower;
     const Point* ppt[1] = { rook_points[0] };
     int npt[] = { 4 };
     fillPoly(_mask, ppt, npt, 1, Scalar(255, 255, 255), 8);
@@ -389,41 +338,55 @@ void BodyModel::generateHead()
 void BodyModel::generateLeftLeg()
 {
     Point rook_points[1][4];
-    rook_points[0][0] = Point(_center_x - _hip_width, _center_y + _chest_heigh + _waist_heigh); //done
-    rook_points[0][3] = Point(_center_x, _center_y + _chest_heigh + _waist_heigh); //done
-    double cos_angle = cos(_leg_angle / 180 * PI);
-    double sin_angle = sin(_leg_angle / 180 * PI);
-    rook_points[0][1] = Point(_center_x - _hip_width - _leg_length * cos_angle,
-        _center_y + _chest_heigh + _waist_heigh + _leg_length * sin_angle);
-    rook_points[0][2] = Point(_center_x - _hip_width - _leg_length * cos_angle + _foot_width,
-        _center_y + _chest_heigh + _waist_heigh + _leg_length * sin_angle);
+    rook_points[0][0] = _left_hip;
+    rook_points[0][3] = _mid_hip;
+    rook_points[0][1] = _left_footrope;
+    rook_points[0][2] = _left_heel;
     const Point* ppt[1] = { rook_points[0] };
     int npt[] = { 4 };
     fillPoly(_mask, ppt, npt, 1, Scalar(255, 255, 255), 8);
 }
+
 void BodyModel::generateRightLeg()
 {
     Point rook_points[1][4];
-    rook_points[0][0] = Point(_center_x + _hip_width, _center_y + _chest_heigh + _waist_heigh); //done
-    rook_points[0][3] = Point(_center_x, _center_y + _chest_heigh + _waist_heigh); //done
-    double cos_angle = cos(_leg_angle / 180 * PI);
-    double sin_angle = sin(_leg_angle / 180 * PI);
-    rook_points[0][1] = Point(_center_x + _hip_width + _leg_length * cos_angle,
-        _center_y + _chest_heigh + _waist_heigh + _leg_length * sin_angle);
-    rook_points[0][2] = Point(_center_x + _hip_width + _leg_length * cos_angle - _foot_width,
-        _center_y + _chest_heigh + _waist_heigh + _leg_length * sin_angle);
+    rook_points[0][0] = _right_hip;
+    rook_points[0][3] = _mid_hip;
+    rook_points[0][1] = _right_footrope;
+    rook_points[0][2] = _right_heel;
     const Point* ppt[1] = { rook_points[0] };
     int npt[] = { 4 };
+    fillPoly(_mask, ppt, npt, 1, Scalar(255, 255, 255), 8);
+}
+void BodyModel::generateLeftFoot()
+{
+    Point rook_points[1][3];
+    rook_points[0][0] = _left_heel;
+    rook_points[0][1] = _left_toe;
+    rook_points[0][2] = _left_heel_upper;
+    const Point* ppt[1] = { rook_points[0] };
+    int npt[] = { 3 };
+    fillPoly(_mask, ppt, npt, 1, Scalar(255, 255, 255), 8);
+}
+
+void BodyModel::generateRightFoot()
+{
+    Point rook_points[1][3];
+    rook_points[0][0] = _right_heel;
+    rook_points[0][1] = _right_toe;
+    rook_points[0][2] = _right_heel_upper;
+    const Point* ppt[1] = { rook_points[0] };
+    int npt[] = { 3 };
     fillPoly(_mask, ppt, npt, 1, Scalar(255, 255, 255), 8);
 }
 
 void BodyModel::generateChest()
 {
     Point rook_points[1][4];
-    rook_points[0][0] = Point(_center_x + _shoulder_width, _center_y);
-    rook_points[0][3] = Point(_center_x - _shoulder_width, _center_y);
-    rook_points[0][1] = Point(_center_x + _waist_width, _center_y + _chest_heigh);
-    rook_points[0][2] = Point(_center_x - _waist_width, _center_y + _chest_heigh);
+    rook_points[0][0] = _right_shoulder;
+    rook_points[0][3] = _left_shoulder;
+    rook_points[0][1] = _right_waist;
+    rook_points[0][2] = _left_waist;
     const Point* ppt[1] = { rook_points[0] };
     int npt[] = { 4 };
     fillPoly(_mask, ppt, npt, 1, Scalar(255, 255, 255), 8);
@@ -432,10 +395,10 @@ void BodyModel::generateChest()
 void BodyModel::generateWaist()
 {
     Point rook_points[1][4];
-    rook_points[0][0] = Point(_center_x + _waist_width, _center_y + _chest_heigh);
-    rook_points[0][3] = Point(_center_x - _waist_width, _center_y + _chest_heigh);
-    rook_points[0][1] = Point(_center_x + _hip_width, _center_y + _chest_heigh + _waist_heigh);
-    rook_points[0][2] = Point(_center_x - _hip_width, _center_y + _chest_heigh + _waist_heigh);
+    rook_points[0][0] = _right_waist;
+    rook_points[0][3] = _left_waist;
+    rook_points[0][1] = _right_hip;
+    rook_points[0][2] = _left_hip;
     const Point* ppt[1] = { rook_points[0] };
     int npt[] = { 4 };
     fillPoly(_mask, ppt, npt, 1, Scalar(255, 255, 255), 8);
