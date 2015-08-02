@@ -297,7 +297,7 @@ void execute(Mat* src)
     int iteration = 0;
     int max_iteration = 1000;
     int last_update = 0;
-    int max_update = NUM_BODY_INPUT_POINTS ;
+    int max_update = NUM_BODY_INPUT_POINTS * 2;
     while (iteration < max_iteration && last_update < max_update) {
 //        int current_index = rand() % NUM_BODY_INPUT_POINTS;
 //        if (index == current_index) {
