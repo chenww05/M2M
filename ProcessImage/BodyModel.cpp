@@ -42,7 +42,9 @@ BodyModel::BodyModel(
     double right_knee_angle,
     int knee_width,
     int shoulder_heigh,
-                     int elbow_width, double left_elbow_angle, double right_elbow_angle
+    int elbow_width,
+    double left_elbow_angle,
+    double right_elbow_angle
                      )
 {
     _img_width = img_width;
@@ -337,15 +339,15 @@ bool BodyModel::validate()
     //躯干为三个头高
     int main_body_heigh = _chest_heigh + _waist_heigh;
     int main_head_heigh = _head_radius + _neck_heigh;
-    if (main_body_heigh > 4 * main_head_heigh || main_body_heigh < 2 * main_head_heigh) {
+    if (main_body_heigh > 4 * main_head_heigh || main_body_heigh < 1.5 * main_head_heigh) {
         return false;
     }
     //手臂长为3个头高
-    if (_arm_length > 4 * main_head_heigh || _arm_length < 2 * main_head_heigh) {
+    if (_arm_length > 4 * main_head_heigh || _arm_length < 1.5 * main_head_heigh) {
         return false;
     }
     //大腿为2个头高，小腿和足为2个头高
-    if (_leg_length > 5 * main_head_heigh || _leg_length < 3 * main_head_heigh) {
+    if (_leg_length > 5 * main_head_heigh || _leg_length < 2 * main_head_heigh) {
         return false;
     }
     return true;
@@ -437,6 +439,7 @@ void BodyModel::drwaCircle(Point center, int radius)
 
 void BodyModel::printOut()
 {
+    cout << _heigh << " " << endl;
     cout << _hip_width << " "
          << _shoulder_width << " "
          << _chest_heigh << " "
@@ -450,6 +453,8 @@ void BodyModel::printOut()
          << _leg_width << " "
          << _waist_width << " "
          << _waist_heigh << " "
+        << _center_x << " "
+        << _center_y << " "
          << _left_leg_angle << " "
          << _right_leg_angle << " "
          << _left_arm_angle << " "

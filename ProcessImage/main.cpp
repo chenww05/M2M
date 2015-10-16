@@ -31,12 +31,13 @@ void ShadowDetect(IplImage* currImg, IplImage* bkImg, Mat* shadowdeImg, double t
 double getH(double R, double G, double B) ;
 int main(int argc, char** argv)
 {
-//        PreProcessing( argc, argv) ;
+        PreProcessing( argc, argv) ;
 //            return 0;
 
     //waitKey(0);
+    currentImg = imread("shadow.JPG");
         src = imread("shadow.jpg");
-        execute(&src);
+        execute(&src, &currentImg);
     return 0;
 }
 
@@ -45,11 +46,11 @@ int PreProcessing(int argc, char** argv)
     /// Load the source image
         backgroundImg = imread(
             "/Users/weiweich/Documents/M2M/ProcessImage/ProcessImage/build/Debug/"
-            "IMG_1551.JPG",
+            "IMG_1799.JPG",
             1);
         currentImg = imread(
             "/Users/weiweich/Documents/M2M/ProcessImage/ProcessImage/build/Debug/"
-            "IMG_1539.JPG",
+            "IMG_1807.JPG",
             1);
 //    backgroundImg = imread(
 //        "/Users/weiweich/Documents/M2M/ProcessImage/ProcessImage/build/Debug/"

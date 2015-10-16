@@ -247,7 +247,7 @@ BodyModel* findBestModel(BodyModel* model, int index, Mat* src, bool& hasUpdate)
     return model;
 }
 
-void execute(Mat* src)
+void execute(Mat* src, Mat* curr)
 {
     // First, picks up one dimension randomly. Goes one direction until reaches a
     // local optimal.
@@ -257,11 +257,11 @@ void execute(Mat* src)
     int hip_width = 150;
     int shoulder_width = 150;
     int chest_heigh = 200;
-    int head_radius = 80;
-    int neck_heigh = 100;
+    int head_radius = 70;
+    int neck_heigh = 150;
     int neck_width = 50;
     int arm_length = 400;
-    int arm_width = 100;
+    int arm_width = 70;
     int hand_width = 50;
     int leg_length = 550;
     int leg_width = 40;
@@ -269,8 +269,8 @@ void execute(Mat* src)
     int waist_heigh = 200;
     double left_leg_angle = 85;
     double right_leg_angle = 85;
-    double left_arm_angle = 60;
-    double right_arm_angle = 60;
+    double left_arm_angle = 50;
+    double right_arm_angle = 50;
     int left_foot_width = 80;
     int right_foot_width = 80;
     int left_foot_heigh = 120;
@@ -278,11 +278,11 @@ void execute(Mat* src)
     double left_knee_angle = 85;
     double right_knee_angle = 85;
     int knee_width = 80;
-    int shoulder_heigh = 80;
-    int elbow_width = 90;
+    int shoulder_heigh = 70;
+    int elbow_width = 60;
     double left_elbow_angle = 60;
     double right_elbow_angle = 60;
-    int center_x = 515;
+    int center_x = 475;
     int center_y = 300;
     BodyModel* model = new BodyModel(hip_width, shoulder_width, chest_heigh, head_radius,
         neck_heigh, neck_width, arm_length, arm_width, hand_width,
@@ -313,13 +313,14 @@ void execute(Mat* src)
             last_update++;
         }
         if (iteration % 10 == 0) {
-            showImg(model, src, iteration / 10);
+            showImg(model, curr, iteration / 10);
+            model->printOut();
         }
         iteration++;
         index ++;
         index = index % NUM_BODY_INPUT_POINTS;
     }
-    //showImg(model, src, iteration);
+    showImg(model, curr, iteration);
     model->printOut();
     //waitKey(0);
 
