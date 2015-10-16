@@ -7,8 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		55AD6A471B67FF5D0020E96A /* ShapeDiff.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 55AD6A451B67FF5D0020E96A /* ShapeDiff.cpp */; };
-		55AD6A4A1B681BC40020E96A /* ShapeLearning.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 55AD6A481B681BC40020E96A /* ShapeLearning.cpp */; };
+		555CCFBC1BD1BD1500CF7544 /* AngleAdjust.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 555CCFBA1BD1BD1500CF7544 /* AngleAdjust.cpp */; };
+		555CCFBF1BD1BD3700CF7544 /* ShadowDetect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 555CCFBD1BD1BD3700CF7544 /* ShadowDetect.cpp */; };
+		555CCFC41BD1BEE300CF7544 /* ShapeDiff.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 555CCFC01BD1BEE300CF7544 /* ShapeDiff.cpp */; };
+		555CCFC51BD1BEE300CF7544 /* ShapeLearning.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 555CCFC21BD1BEE300CF7544 /* ShapeLearning.cpp */; };
 		55AD6A4D1B683FFB0020E96A /* BasicMath.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 55AD6A4B1B683FFB0020E96A /* BasicMath.cpp */; };
 		55AD6A501B6880C30020E96A /* BodyModel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 55AD6A4E1B6880C30020E96A /* BodyModel.cpp */; };
 		55CA6B9E1B5F5F7F00C36D3D /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 55CA6B9D1B5F5F7F00C36D3D /* main.cpp */; };
@@ -27,10 +29,14 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		55AD6A451B67FF5D0020E96A /* ShapeDiff.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ShapeDiff.cpp; sourceTree = "<group>"; };
-		55AD6A461B67FF5D0020E96A /* ShapeDiff.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = ShapeDiff.hpp; sourceTree = "<group>"; };
-		55AD6A481B681BC40020E96A /* ShapeLearning.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ShapeLearning.cpp; sourceTree = "<group>"; };
-		55AD6A491B681BC40020E96A /* ShapeLearning.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = ShapeLearning.hpp; sourceTree = "<group>"; };
+		555CCFBA1BD1BD1500CF7544 /* AngleAdjust.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AngleAdjust.cpp; sourceTree = "<group>"; };
+		555CCFBB1BD1BD1500CF7544 /* AngleAdjust.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = AngleAdjust.hpp; sourceTree = "<group>"; };
+		555CCFBD1BD1BD3700CF7544 /* ShadowDetect.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ShadowDetect.cpp; sourceTree = "<group>"; };
+		555CCFBE1BD1BD3700CF7544 /* ShadowDetect.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = ShadowDetect.hpp; sourceTree = "<group>"; };
+		555CCFC01BD1BEE300CF7544 /* ShapeDiff.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ShapeDiff.cpp; sourceTree = "<group>"; };
+		555CCFC11BD1BEE300CF7544 /* ShapeDiff.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = ShapeDiff.hpp; sourceTree = "<group>"; };
+		555CCFC21BD1BEE300CF7544 /* ShapeLearning.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ShapeLearning.cpp; sourceTree = "<group>"; };
+		555CCFC31BD1BEE300CF7544 /* ShapeLearning.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = ShapeLearning.hpp; sourceTree = "<group>"; };
 		55AD6A4B1B683FFB0020E96A /* BasicMath.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BasicMath.cpp; sourceTree = "<group>"; };
 		55AD6A4C1B683FFB0020E96A /* BasicMath.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = BasicMath.hpp; sourceTree = "<group>"; };
 		55AD6A4E1B6880C30020E96A /* BodyModel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BodyModel.cpp; sourceTree = "<group>"; };
@@ -69,15 +75,19 @@
 		55CA6B9C1B5F5F7F00C36D3D /* ProcessImage */ = {
 			isa = PBXGroup;
 			children = (
+				555CCFC01BD1BEE300CF7544 /* ShapeDiff.cpp */,
+				555CCFC11BD1BEE300CF7544 /* ShapeDiff.hpp */,
+				555CCFC21BD1BEE300CF7544 /* ShapeLearning.cpp */,
+				555CCFC31BD1BEE300CF7544 /* ShapeLearning.hpp */,
+				555CCFBA1BD1BD1500CF7544 /* AngleAdjust.cpp */,
+				555CCFBB1BD1BD1500CF7544 /* AngleAdjust.hpp */,
 				55CA6B9D1B5F5F7F00C36D3D /* main.cpp */,
-				55AD6A451B67FF5D0020E96A /* ShapeDiff.cpp */,
-				55AD6A461B67FF5D0020E96A /* ShapeDiff.hpp */,
-				55AD6A481B681BC40020E96A /* ShapeLearning.cpp */,
-				55AD6A491B681BC40020E96A /* ShapeLearning.hpp */,
 				55AD6A4B1B683FFB0020E96A /* BasicMath.cpp */,
 				55AD6A4C1B683FFB0020E96A /* BasicMath.hpp */,
 				55AD6A4E1B6880C30020E96A /* BodyModel.cpp */,
 				55AD6A4F1B6880C30020E96A /* BodyModel.hpp */,
+				555CCFBD1BD1BD3700CF7544 /* ShadowDetect.cpp */,
+				555CCFBE1BD1BD3700CF7544 /* ShadowDetect.hpp */,
 			);
 			path = ProcessImage;
 			sourceTree = "<group>";
@@ -138,11 +148,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				55AD6A471B67FF5D0020E96A /* ShapeDiff.cpp in Sources */,
+				555CCFBF1BD1BD3700CF7544 /* ShadowDetect.cpp in Sources */,
+				555CCFBC1BD1BD1500CF7544 /* AngleAdjust.cpp in Sources */,
 				55AD6A501B6880C30020E96A /* BodyModel.cpp in Sources */,
 				55AD6A4D1B683FFB0020E96A /* BasicMath.cpp in Sources */,
+				555CCFC41BD1BEE300CF7544 /* ShapeDiff.cpp in Sources */,
+				555CCFC51BD1BEE300CF7544 /* ShapeLearning.cpp in Sources */,
 				55CA6B9E1B5F5F7F00C36D3D /* main.cpp in Sources */,
-				55AD6A4A1B681BC40020E96A /* ShapeLearning.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

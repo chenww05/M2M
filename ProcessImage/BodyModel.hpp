@@ -10,8 +10,6 @@
 #define BodyModel_hpp
 
 #include <stdio.h>
-
-#include <stdio.h>
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
 #include "opencv2/imgproc/imgproc.hpp"
@@ -20,10 +18,10 @@
 #include <stdlib.h>     /* srand, rand */
 #include <time.h>       /* time */
 #include <math.h>
+#include "BasicMath.hpp"
 using namespace cv;
 using namespace std;
 
-#define PI 3.14159
 #define NUM_BODY_INPUT_POINTS 30
 
 class BodyModel {
