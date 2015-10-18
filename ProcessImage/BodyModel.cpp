@@ -247,7 +247,7 @@ BodyModel::BodyModel(
 
     //Derive head
     _head_center = Point(_center_x, _center_y - _neck_heigh);
-    _head_upper = Point(_center_x, _center_y - neck_heigh - _head_radius);
+    _head_upper = Point(_center_x, _center_y - _neck_heigh - _head_radius);
 }
 
 bool BodyModel::withinImage(Point point)
@@ -374,7 +374,7 @@ Mat BodyModel::generateMat()
     // draw right hand
     drawBodyShape(_right_elbow_upper, _right_elbow_lower, _right_hand_upper, _right_hand_lower, 5);
     // draw head
-    drwaCircle(_head_center, _head_radius);
+    drawCircle(_head_center, _head_radius);
     // draw left leg
     drawPolygon(_left_hip, _mid_hip, _left_knee, _left_knee_inner);
     // draw right leg
@@ -432,7 +432,7 @@ void BodyModel::drawPolygon(Point upperRight, Point upperLeft, Point lowerRight,
     int npt[] = { 4 };
     fillPoly(_mask, ppt, npt, 1, Scalar(255, 255, 255), 8);
 }
-void BodyModel::drwaCircle(Point center, int radius)
+void BodyModel::drawCircle(Point center, int radius)
 {
     circle(_mask, center, radius, Scalar(255, 255, 255), -1);
 }

@@ -186,7 +186,7 @@ private:
     void drawTriangle(Point, Point, Point);
     void drawPolygon(Point, Point, Point, Point);
     void drawBodyShape(Point, Point, Point, Point, int);
-    void drwaCircle(Point, int);
+    void drawCircle(Point, int);
 
 
 };

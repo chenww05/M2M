@@ -8,6 +8,7 @@
 
 #include "ShapeLearning.hpp"
 #include "ShapeDiff.hpp"
+#include "FinalResultShow.hpp"
 
 pair<BodyModel*, BodyModel*> generateLeftRightModel(BodyModel* original,
     int index, int step)
@@ -247,7 +248,7 @@ BodyModel* findBestModel(BodyModel* model, int index, Mat* src, bool& hasUpdate)
     return model;
 }
 
-void learn(Mat* src, Mat* curr)
+void learn(Mat* src, Mat* curr, Mat* imageShown)
 {
     // First, picks up one dimension randomly. Goes one direction until reaches a
     // local optimal.
@@ -298,6 +299,7 @@ void learn(Mat* src, Mat* curr)
     int max_iteration = 1000;
     int last_update = 0;
     int max_update = NUM_BODY_INPUT_POINTS * 2;
+    
     while (iteration < max_iteration && last_update < max_update) {
 //        int current_index = rand() % NUM_BODY_INPUT_POINTS;
 //        if (index == current_index) {
@@ -313,14 +315,14 @@ void learn(Mat* src, Mat* curr)
             last_update++;
         }
         if (iteration % 10 == 0) {
-            showImg(model, curr, iteration / 10);
+            showImg(model, imageShown, iteration / 10);
             model->printOut();
         }
         iteration++;
         index ++;
         index = index % NUM_BODY_INPUT_POINTS;
     }
-    showImg(model, curr, iteration);
+    showImg(model, imageShown, iteration);
     model->printOut();
     //waitKey(0);
 
@@ -337,30 +339,4 @@ void learn(Mat* src, Mat* curr)
     //    }
 
     //    imwrite("src.jpg", *src);
-}
-
-void showImg(BodyModel* model, Mat* src, int iteration)
-{
-    Mat edge, draw;
-    Mat dest;
-    src->copyTo(dest);
-    Mat mask = model->generateMat();
-    Canny(mask, edge, 50, 150, 3);
-    edge.convertTo(draw, CV_8U);
-
-    for (int i = 0; i < src->rows; ++i) {
-        for (int j = 0; j < src->cols; ++j) {
-            if (edge.at<uchar>(i, j) == 255) {
-                dest.at<uchar>(i, j * 3) = 255;
-            }
-        }
-    }
-
-    string Result;
-    ostringstream convert;
-    convert << iteration;
-    imwrite("dest" +  convert.str() + ".jpg", dest);
-    //imshow("Edge Map", dest);
-    //waitKey(0);
-    cout << "Updated " << endl;
 }
