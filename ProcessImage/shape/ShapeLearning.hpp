@@ -24,7 +24,7 @@ using namespace std;
 
 #define NUM_POINTS 26
 
-void learn(Mat* src, Mat* curr) ;
+void learn(Mat* src, Mat* curr, Mat* img) ;
 pair<BodyModel*, BodyModel*> generateLeftRightModel(BodyModel* original, int index, int step);
 BodyModel* generateModel(BodyModel* original, int index, int step) ;
 BodyModel* findBestModel(BodyModel* model, int index, Mat* src, bool& hasUpdate);

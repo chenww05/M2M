@@ -39,21 +39,23 @@ int main(int argc, char** argv)
     //waitKey(0);
     currentImg = imread("shadow.JPG");
     src = imread("shadow.jpg");
-    learn(&src, &currentImg);
+    learn(&src, &currentImg, &backgroundImg);
     return 0;
 }
 
 int PreProcessing(int argc, char** argv)
 {
     /// Load the source image
-    backgroundImg = imread(
-        "/Users/weiweich/Documents/M2M/ProcessImage/ProcessImage/build/Debug/"
-        "IMG_1799.JPG",
-        1);
-    currentImg = imread(
-        "/Users/weiweich/Documents/M2M/ProcessImage/ProcessImage/build/Debug/"
-        "IMG_1807.JPG",
-        1);
+    backgroundImg = imread("/Users/weiweich/Downloads/IMG_1541.JPG", 1);
+    currentImg = imread("/Users/weiweich/Downloads/IMG_1551.JPG", 1);
+    //backgroundImg = imread(
+    //    "/Users/weiweich/Documents/M2M/ProcessImage/ProcessImage/build/Debug/"
+    //    "IMG_1799.JPG",
+    //    1);
+    //currentImg = imread(
+    //    "/Users/weiweich/Documents/M2M/ProcessImage/ProcessImage/build/Debug/"
+    //    "IMG_1807.JPG",
+    //    1);
     //    backgroundImg = imread(
     //        "/Users/weiweich/Documents/M2M/ProcessImage/ProcessImage/build/Debug/"
     //        "IMG_1462.JPG",

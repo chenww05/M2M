@@ -48,13 +48,10 @@ double AngleAdjust::getHeight(
     return _h3;
 }
 
-double AngleAdjust::getShoulderWidth(
-                                     double shoulder_y,
-                                     double shoulder_x
-                                    ) {
+double AngleAdjust::getWidth(double point_y, double point_x) {
     double A4_angle = _lambda_angle / 2 - _A2_angle - _beta_angle;
     double d4 = _d2 /  cos(A4_angle / 180 * PI);
-    double etha_1 = atan(tan(_alpha_angle / 2 / 180 * PI) * (640 - shoulder_y) / 640) / PI * 180;
+    double etha_1 = atan(tan(_alpha_angle / 2 / 180 * PI) * (640 - point_y) / 640) / PI * 180;
     double etha_2 = atan(tan(_alpha_angle / 2 / 180 * PI) * (640 - _lower_pixel) / 640) / PI * 180;
     double etha = etha_1 + etha_2;
     double A5_angle = etha - _A2_angle - A4_angle;
@@ -66,7 +63,19 @@ double AngleAdjust::getShoulderWidth(
     double l3 = d4 * tan (_lambda_angle / 2 / 180 * PI);
     double l4 = sqrt(l2 * l2 - l3 * l3);
     double l5 = 2 * l3 * d5 / l4;
-    double A7_angle = 2 * atan(tan(_lambda_angle / 2 / 180 * PI) * shoulder_x / 480) / PI * 180;//shoulder angle
+    double A7_angle = 2 * atan(tan(_lambda_angle / 2 / 180 * PI) * point_x / 480) / PI * 180;//shoulder angle
     double l6 = tan(A7_angle / 2 / 180 * PI) * l5 / tan(_lambda_angle / 2 / 180 * PI);
     return l6;
+}
+
+double AngleAdjust::getShoulderWidth(double shoulder_y, double shoulder_x) {
+    return getWidth(shoulder_y, shoulder_x);
+}
+
+double AngleAdjust::getHipWidth(double hip_y, double hip_x) {
+    return getWidth(hip_y, hip_x);
+}
+
+double AngleAdjust::getWaistWidth(double waist_y, double waist_x) {
+    return getWidth(waist_y, waist_x);
 }

@@ -18,6 +18,9 @@ public:
     AngleAdjust(double, double, double, double, double);
     double getHeight(double, double);
     double getShoulderWidth(double, double);
+    double getHipWidth(double, double);
+    double getWaistWidth(double, double);
+    double getWidth(double, double);
 private:
     double _alpha_angle;
     double _height_pixel;

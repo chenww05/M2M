@@ -252,7 +252,6 @@ void learn(Mat* src, Mat* curr, Mat* imageShown)
 {
     // First, picks up one dimension randomly. Goes one direction until reaches a
     // local optimal.
-
     double width = 960;
     double heigh = 1280;
     int hip_width = 150;
@@ -315,7 +314,45 @@ void learn(Mat* src, Mat* curr, Mat* imageShown)
             last_update++;
         }
         if (iteration % 10 == 0) {
-            showImg(model, imageShown, iteration / 10);
+            BodyModel* adjusted_model = new BodyModel(
+                                                      model->_hip_width,
+                                                      model->_shoulder_width,
+                                                      model->_chest_heigh,
+                                                      model->_head_radius,
+                                                      model->_neck_heigh,
+                                                      model->_neck_width,
+                                                      model->_arm_length,
+                                                      model->_arm_width,
+                                                      model->_hand_width,
+                                                      model->_leg_length,
+                                                      model->_leg_width,
+                                                      model->_waist_width,
+                                                      model->_waist_heigh,
+                                                      model->_center_x,
+                                                      model->_center_y,
+                                                      model->_img_width,
+                                                      model->_img_heigh,
+                                                      model->_left_leg_angle,
+                                                      model->_right_leg_angle,
+                                                      model->_left_arm_angle + 0,
+                                                      model->_right_arm_angle + 0,
+                                                      model->_left_foot_width,
+                                                      model->_right_foot_width,
+                                                      model->_left_foot_heigh,
+                                                      model->_right_foot_heigh,
+                                                      model->_left_knee_angle,
+                                                      model->_right_knee_angle,
+                                                      model->_knee_width,
+                                                      model->_shoulder_heigh,
+                                                      model->_elbow_width,
+                                                      model->_left_elbow_angle,
+                                                      model->_right_elbow_angle
+            );
+            adjusted_model->_left_shoulder.y -= 20;
+            adjusted_model->_right_shoulder.y -= 15;
+            adjusted_model->_left_shoulder.x -= 20;
+            adjusted_model->_right_shoulder.x += 15;
+            showImg(adjusted_model, imageShown, iteration / 10);
             model->printOut();
         }
         iteration++;
